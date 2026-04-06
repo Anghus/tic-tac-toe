@@ -589,7 +589,7 @@ function handleMessage(raw) {
     updateStatus();
     updateProbBar();
   } else if (msg.type === 'reset') {
-    initGame();
+    initGame(msg.starter);
   } else if (msg.type === 'undo') {
     // Opponent requests undo of their last move
     if (moves.length === 0 || gameOver) return;
@@ -746,9 +746,9 @@ function leaveGame() {
 }
 
 // ── Game Logic ─────────────────────────────────────────
-function initGame() {
+function initGame(startingPlayer) {
   grid = Array.from({ length: SIZE }, () => Array(SIZE).fill(null));
-  currentPlayer = 'X';
+  currentPlayer = startingPlayer || (Math.random() < 0.5 ? 'X' : 'O');
   moves = [];
   gameOver = false;
   winLineEl.style.display = 'none';
@@ -895,8 +895,9 @@ function undo() {
 }
 
 function resetGame() {
-  if (gameMode === 'online') sendMsg({ type: 'reset' });
-  initGame();
+  const starter = Math.random() < 0.5 ? 'X' : 'O';
+  if (gameMode === 'online') sendMsg({ type: 'reset', starter });
+  initGame(starter);
 }
 
 function render(winCells = null) {
