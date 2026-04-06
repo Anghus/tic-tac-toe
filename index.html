@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Tic-Tac-Toe 13x13</title>
+<script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -30,22 +31,106 @@
     -webkit-text-fill-color: transparent;
   }
 
-  .status {
-    font-size: 1.1rem;
-    font-weight: 500;
-    height: 1.4em;
-    transition: all 0.3s;
+  /* ── Lobby ────────────────────────────────────────── */
+  .lobby {
+    display: flex; flex-direction: column; align-items: center; gap: 20px;
+    padding: 40px; border-radius: 16px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    min-width: 320px;
+  }
+  .lobby h2 {
+    font-size: 1rem; font-weight: 500; color: rgba(255,255,255,0.6);
+  }
+  .lobby-buttons {
+    display: flex; flex-direction: column; gap: 12px; width: 100%;
+  }
+  .lobby-buttons button {
+    width: 100%; padding: 14px; font-size: 1rem;
+  }
+  .btn-primary {
+    background: linear-gradient(135deg, rgba(99,102,241,0.2), rgba(168,85,247,0.2)) !important;
+    border-color: rgba(99,102,241,0.4) !important;
+  }
+  .btn-primary:hover {
+    background: linear-gradient(135deg, rgba(99,102,241,0.3), rgba(168,85,247,0.3)) !important;
+  }
+  .btn-pink {
+    background: linear-gradient(135deg, rgba(236,72,153,0.2), rgba(168,85,247,0.2)) !important;
+    border-color: rgba(236,72,153,0.4) !important;
+  }
+  .btn-pink:hover {
+    background: linear-gradient(135deg, rgba(236,72,153,0.3), rgba(168,85,247,0.3)) !important;
+  }
+  .join-section {
+    display: flex; gap: 8px; width: 100%;
+  }
+  .join-section input {
+    flex: 1; padding: 12px 14px; border-radius: 8px;
+    border: 1px solid rgba(255,255,255,0.12);
+    background: rgba(255,255,255,0.06); color: #e0e0e0;
+    font-size: 0.95rem; font-family: inherit;
+    outline: none;
+  }
+  .join-section input:focus {
+    border-color: rgba(236,72,153,0.5);
+  }
+  .join-section input::placeholder { color: rgba(255,255,255,0.25); }
+  .join-section button { white-space: nowrap; }
+
+  .game-code {
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    font-size: 1.8rem; font-weight: 700; letter-spacing: 0.15em;
+    background: linear-gradient(135deg, #6366f1, #a855f7);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    user-select: all; cursor: pointer;
+  }
+  .lobby-status {
+    font-size: 0.85rem; color: rgba(255,255,255,0.4);
+    text-align: center; line-height: 1.5;
+  }
+  .lobby-status.error { color: #f87171; }
+  .copy-hint {
+    font-size: 0.75rem; color: rgba(255,255,255,0.25);
+  }
+  .lobby .back-link {
+    font-size: 0.8rem; color: rgba(255,255,255,0.3);
+    cursor: pointer; text-decoration: underline;
+    background: none; border: none; padding: 0;
+  }
+  .lobby .back-link:hover { color: rgba(255,255,255,0.5); }
+
+  .hidden { display: none !important; }
+
+  /* ── Game UI ──────────────────────────────────────── */
+  .game-container {
+    display: flex; flex-direction: column; align-items: center; gap: 20px;
   }
 
+  .status {
+    font-size: 1.1rem; font-weight: 500; min-height: 1.4em;
+    transition: all 0.3s; text-align: center;
+  }
   .status .x { color: #6366f1; }
   .status .o { color: #ec4899; }
   .status .winner {
     background: linear-gradient(135deg, #6366f1, #ec4899);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    font-weight: 700;
-    font-size: 1.3rem;
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    font-weight: 700; font-size: 1.3rem;
   }
+  .status .you-tag {
+    font-size: 0.75rem; opacity: 0.5; font-weight: 400;
+  }
+
+  .connection-bar {
+    font-size: 0.75rem; color: rgba(255,255,255,0.3);
+    display: flex; align-items: center; gap: 6px;
+  }
+  .connection-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: #22c55e; display: inline-block;
+  }
+  .connection-dot.disconnected { background: #ef4444; }
 
   .board-wrapper {
     position: relative;
@@ -56,26 +141,21 @@
   .board {
     display: grid;
     grid-template-columns: repeat(13, 1fr);
-    gap: 2px;
-    padding: 10px;
+    gap: 2px; padding: 10px;
     background: rgba(255, 255, 255, 0.03);
     border-radius: 16px;
     border: 1px solid rgba(255, 255, 255, 0.06);
     backdrop-filter: blur(10px);
-    width: 100%;
-    height: 100%;
+    width: 100%; height: 100%;
   }
 
   .win-line-overlay {
     position: absolute;
     top: 10px; left: 10px; right: 10px; bottom: 10px;
-    pointer-events: none;
-    z-index: 10;
+    pointer-events: none; z-index: 10;
   }
-
   .win-line-overlay line {
-    stroke-linecap: round;
-    stroke-width: 1.2;
+    stroke-linecap: round; stroke-width: 1.2;
     filter: drop-shadow(0 0 6px var(--line-color)) drop-shadow(0 0 14px var(--line-color));
   }
 
@@ -83,46 +163,33 @@
     aspect-ratio: 1;
     border: 1px solid rgba(255, 255, 255, 0.05);
     border-radius: 4px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display: flex; align-items: center; justify-content: center;
     font-size: clamp(10px, 2.8vw, 18px);
-    font-weight: 700;
-    cursor: pointer;
+    font-weight: 700; cursor: pointer;
     transition: all 0.2s ease;
     background: rgba(255, 255, 255, 0.02);
     position: relative;
   }
-
-  .cell:hover:not(.taken):not(.locked) {
+  .cell:hover:not(.taken):not(.locked):not(.not-my-turn) {
     background: rgba(255, 255, 255, 0.08);
     border-color: rgba(255, 255, 255, 0.15);
     transform: scale(1.08);
   }
-
-  .cell.valid {
-    background: rgba(255, 255, 255, 0.04);
-    border-color: rgba(255, 255, 255, 0.1);
-  }
-
-  .cell.valid:hover:not(.taken) {
+  .cell.valid { background: rgba(255, 255, 255, 0.04); border-color: rgba(255, 255, 255, 0.1); }
+  .cell.valid:hover:not(.taken):not(.not-my-turn) {
     background: rgba(255, 255, 255, 0.1);
     border-color: rgba(163, 130, 255, 0.4);
     box-shadow: 0 0 12px rgba(163, 130, 255, 0.15);
   }
-
   .cell.locked { opacity: 0.2; cursor: default; border-color: transparent; }
   .cell.taken { cursor: default; }
+  .cell.not-my-turn { cursor: default; }
 
   .cell .mark { animation: popIn 0.25s cubic-bezier(0.34, 1.56, 0.64, 1); }
   .cell .mark.x { color: #6366f1; text-shadow: 0 0 12px rgba(99, 102, 241, 0.4); }
   .cell .mark.o { color: #ec4899; text-shadow: 0 0 12px rgba(236, 72, 153, 0.4); }
 
-  .cell.win-cell {
-    animation: winPulse 0.6s ease;
-    background: rgba(255, 255, 255, 0.1);
-    z-index: 5;
-  }
+  .cell.win-cell { animation: winPulse 0.6s ease; background: rgba(255, 255, 255, 0.1); z-index: 5; }
   .cell.win-cell .mark.x { text-shadow: 0 0 24px rgba(99, 102, 241, 0.9); }
   .cell.win-cell .mark.o { text-shadow: 0 0 24px rgba(236, 72, 153, 0.9); }
 
@@ -131,181 +198,129 @@
   .cell.boundary-left { border-left: 2px solid rgba(163, 130, 255, 0.25); }
   .cell.boundary-right { border-right: 2px solid rgba(163, 130, 255, 0.25); }
 
-  @keyframes popIn {
-    0% { transform: scale(0); opacity: 0; }
-    100% { transform: scale(1); opacity: 1; }
-  }
-  @keyframes winPulse {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.15); }
-  }
-  @keyframes lineGrow {
-    0% { stroke-dashoffset: 1000; }
-    100% { stroke-dashoffset: 0; }
-  }
+  @keyframes popIn { 0% { transform: scale(0); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+  @keyframes winPulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.15); } }
+  @keyframes lineGrow { 0% { stroke-dashoffset: 1000; } 100% { stroke-dashoffset: 0; } }
 
-  /* Celebration */
-  .confetti-container {
-    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    pointer-events: none; z-index: 100; overflow: hidden;
-  }
-  .confetti {
-    position: absolute; opacity: 0;
-    animation: confettiFall linear forwards;
-  }
-  @keyframes confettiFall {
-    0% { opacity: 1; transform: translateY(0) rotate(0deg) scale(1); }
-    80% { opacity: 1; }
-    100% { opacity: 0; transform: translateY(100vh) rotate(720deg) scale(0.5); }
-  }
-  .celebration-flash {
-    position: fixed; inset: 0; pointer-events: none; z-index: 99;
-    animation: flash 0.8s ease-out forwards;
-  }
-  @keyframes flash {
-    0% { background: rgba(255, 255, 255, 0.25); }
-    100% { background: transparent; }
-  }
+  .confetti-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 100; overflow: hidden; }
+  .confetti { position: absolute; opacity: 0; animation: confettiFall linear forwards; }
+  @keyframes confettiFall { 0% { opacity: 1; transform: translateY(0) rotate(0deg) scale(1); } 80% { opacity: 1; } 100% { opacity: 0; transform: translateY(100vh) rotate(720deg) scale(0.5); } }
+  .celebration-flash { position: fixed; inset: 0; pointer-events: none; z-index: 99; animation: flash 0.8s ease-out forwards; }
+  @keyframes flash { 0% { background: rgba(255, 255, 255, 0.25); } 100% { background: transparent; } }
 
-  /* Starburst ring */
-  .starburst {
-    position: fixed; top: 50%; left: 50%;
-    width: 300px; height: 300px;
-    margin: -150px 0 0 -150px;
-    border-radius: 50%;
-    pointer-events: none; z-index: 98;
-    animation: starburstAnim 1.2s ease-out forwards;
-  }
-  @keyframes starburstAnim {
-    0% { transform: scale(0); opacity: 1; box-shadow: 0 0 60px 30px var(--burst-color), 0 0 120px 60px var(--burst-color); }
-    100% { transform: scale(4); opacity: 0; box-shadow: 0 0 0 0 transparent; }
-  }
+  .starburst { position: fixed; top: 50%; left: 50%; width: 300px; height: 300px; margin: -150px 0 0 -150px; border-radius: 50%; pointer-events: none; z-index: 98; animation: starburstAnim 1.2s ease-out forwards; }
+  @keyframes starburstAnim { 0% { transform: scale(0); opacity: 1; box-shadow: 0 0 60px 30px var(--burst-color), 0 0 120px 60px var(--burst-color); } 100% { transform: scale(4); opacity: 0; box-shadow: 0 0 0 0 transparent; } }
 
-  /* Winner banner */
-  .winner-banner {
-    position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0);
-    font-size: 3rem; font-weight: 800; letter-spacing: 0.1em;
-    text-transform: uppercase; pointer-events: none; z-index: 101;
-    animation: bannerPop 0.5s 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-    text-shadow: 0 0 40px var(--banner-color), 0 4px 20px rgba(0,0,0,0.5);
-    white-space: nowrap;
-  }
-  @keyframes bannerPop {
-    0% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
-    100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
-  }
-  @keyframes bannerFade {
-    0% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-    100% { opacity: 0; transform: translate(-50%, -60%) scale(1.1); }
-  }
+  .winner-banner { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0); font-size: 3rem; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; pointer-events: none; z-index: 101; animation: bannerPop 0.5s 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; text-shadow: 0 0 40px var(--banner-color), 0 4px 20px rgba(0,0,0,0.5); white-space: nowrap; }
+  @keyframes bannerPop { 0% { transform: translate(-50%, -50%) scale(0); opacity: 0; } 100% { transform: translate(-50%, -50%) scale(1); opacity: 1; } }
+  @keyframes bannerFade { 0% { opacity: 1; transform: translate(-50%, -50%) scale(1); } 100% { opacity: 0; transform: translate(-50%, -60%) scale(1.1); } }
 
   .controls { display: flex; gap: 12px; align-items: center; }
-
   button {
-    padding: 10px 24px;
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    border-radius: 8px;
-    background: rgba(255, 255, 255, 0.06);
-    color: #e0e0e0;
-    font-size: 0.9rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s;
-    letter-spacing: 0.02em;
+    padding: 10px 24px; border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 8px; background: rgba(255, 255, 255, 0.06);
+    color: #e0e0e0; font-size: 0.9rem; font-weight: 500;
+    cursor: pointer; transition: all 0.2s; letter-spacing: 0.02em;
   }
-  button:hover {
-    background: rgba(255, 255, 255, 0.12);
-    border-color: rgba(255, 255, 255, 0.2);
-  }
+  button:hover { background: rgba(255, 255, 255, 0.12); border-color: rgba(255, 255, 255, 0.2); }
 
-  .hint {
-    font-size: 0.8rem;
-    color: rgba(255, 255, 255, 0.35);
-    text-align: center;
-    max-width: 380px;
-    line-height: 1.5;
-  }
-
-  .score {
-    display: flex; gap: 32px;
-    font-size: 0.95rem; font-weight: 500;
-  }
+  .hint { font-size: 0.8rem; color: rgba(255, 255, 255, 0.35); text-align: center; max-width: 380px; line-height: 1.5; }
+  .score { display: flex; gap: 32px; font-size: 0.95rem; font-weight: 500; }
   .score span { opacity: 0.6; }
   .score .x-score { color: #6366f1; }
   .score .o-score { color: #ec4899; }
 
-  /* Probability bar */
-  .prob-container {
-    width: min(92vw, 560px);
-    display: flex; flex-direction: column; gap: 6px;
-  }
-  .prob-labels {
-    display: flex; justify-content: space-between;
-    font-size: 0.8rem; font-weight: 600;
-  }
+  .prob-container { width: min(92vw, 560px); display: flex; flex-direction: column; gap: 6px; }
+  .prob-labels { display: flex; justify-content: space-between; font-size: 0.8rem; font-weight: 600; }
   .prob-labels .x-prob { color: #6366f1; }
   .prob-labels .draw-prob { color: rgba(255, 255, 255, 0.4); font-weight: 400; }
   .prob-labels .o-prob { color: #ec4899; }
-  .prob-depth {
-    text-align: center;
-    font-size: 0.7rem;
-    color: rgba(255, 255, 255, 0.25);
-    margin-top: -2px;
-  }
-  .prob-bar {
-    width: 100%; height: 8px; border-radius: 4px;
-    overflow: hidden; display: flex;
-    background: rgba(255, 255, 255, 0.06);
-  }
-  .prob-bar .x-segment {
-    height: 100%; background: linear-gradient(90deg, #4f46e5, #6366f1);
-    transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    border-radius: 4px 0 0 4px;
-  }
-  .prob-bar .draw-segment {
-    height: 100%; background: rgba(255, 255, 255, 0.12);
-    transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-  .prob-bar .o-segment {
-    height: 100%; background: linear-gradient(90deg, #ec4899, #db2777);
-    transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    border-radius: 0 4px 4px 0;
-  }
+  .prob-depth { text-align: center; font-size: 0.7rem; color: rgba(255, 255, 255, 0.25); margin-top: -2px; }
+  .prob-bar { width: 100%; height: 8px; border-radius: 4px; overflow: hidden; display: flex; background: rgba(255, 255, 255, 0.06); }
+  .prob-bar .x-segment { height: 100%; background: linear-gradient(90deg, #4f46e5, #6366f1); transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1); border-radius: 4px 0 0 4px; }
+  .prob-bar .draw-segment { height: 100%; background: rgba(255, 255, 255, 0.12); transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+  .prob-bar .o-segment { height: 100%; background: linear-gradient(90deg, #ec4899, #db2777); transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1); border-radius: 0 4px 4px 0; }
+
+  @keyframes pulse { 0%, 100% { opacity: 0.4; } 50% { opacity: 1; } }
+  .waiting { animation: pulse 1.5s ease-in-out infinite; }
 </style>
 </head>
 <body>
 
 <h1>Tic-Tac-Toe</h1>
-<div class="score">
-  <div class="x-score">X: <span id="xWins">0</span></div>
-  <div class="o-score">O: <span id="oWins">0</span></div>
-</div>
-<div class="status" id="status">
-  <span class="x">X</span>'s turn &mdash; place anywhere
-</div>
-<div class="prob-container">
-  <div class="prob-labels">
-    <span class="x-prob" id="xProb">X 50%</span>
-    <span class="draw-prob" id="drawProb">Draw 0%</span>
-    <span class="o-prob" id="oProb">O 50%</span>
+
+<!-- ── Lobby ──────────────────────────────────────── -->
+<div class="lobby" id="lobby">
+  <h2>Choose a game mode</h2>
+
+  <!-- Main menu -->
+  <div class="lobby-buttons" id="lobbyMenu">
+    <button class="btn-primary" id="createBtn">Create Online Game</button>
+    <button class="btn-pink" id="joinBtn">Join Online Game</button>
+    <button id="localBtn">Local Play</button>
   </div>
-  <div class="prob-bar">
-    <div class="x-segment" id="xBar" style="width:50%"></div>
-    <div class="draw-segment" id="drawBar" style="width:0%"></div>
-    <div class="o-segment" id="oBar" style="width:50%"></div>
+
+  <!-- Create: waiting for opponent -->
+  <div class="hidden" id="createView">
+    <div style="display:flex;flex-direction:column;align-items:center;gap:14px;">
+      <div class="lobby-status">Share this code with your opponent:</div>
+      <div class="game-code" id="gameCode" title="Click to copy">----</div>
+      <div class="copy-hint">Click the code to copy</div>
+      <div class="lobby-status waiting" id="createStatus">Waiting for opponent to join...</div>
+      <button class="back-link" id="createBack">Cancel</button>
+    </div>
   </div>
-  <div class="prob-depth" id="probDepth"></div>
+
+  <!-- Join: enter code -->
+  <div class="hidden" id="joinView">
+    <div style="display:flex;flex-direction:column;align-items:center;gap:14px;width:280px;">
+      <div class="lobby-status">Enter the game code:</div>
+      <div class="join-section">
+        <input type="text" id="joinInput" placeholder="e.g. ABCD" maxlength="6" autocomplete="off" spellcheck="false">
+        <button class="btn-pink" id="joinConnect">Join</button>
+      </div>
+      <div class="lobby-status" id="joinStatus"></div>
+      <button class="back-link" id="joinBack">Cancel</button>
+    </div>
+  </div>
 </div>
-<div class="board-wrapper">
-  <div class="board" id="board"></div>
-  <svg class="win-line-overlay" id="winLine" viewBox="0 0 100 100" preserveAspectRatio="none" style="display:none;"></svg>
-</div>
-<div class="controls">
-  <button id="resetBtn">New Game</button>
-  <button id="undoBtn">Undo</button>
-</div>
-<div class="hint">
-  Place marks anywhere on the 13&times;13 grid. Your moves define a 3&times;3 region &mdash; once formed, you're locked in.
+
+<!-- ── Game ───────────────────────────────────────── -->
+<div class="game-container hidden" id="gameContainer">
+  <div class="connection-bar hidden" id="connectionBar">
+    <span class="connection-dot" id="connectionDot"></span>
+    <span id="connectionText">Connected</span>
+  </div>
+  <div class="score">
+    <div class="x-score">X: <span id="xWins">0</span></div>
+    <div class="o-score">O: <span id="oWins">0</span></div>
+  </div>
+  <div class="status" id="status"></div>
+  <div class="prob-container">
+    <div class="prob-labels">
+      <span class="x-prob" id="xProb">X 50%</span>
+      <span class="draw-prob" id="drawProb">Draw 0%</span>
+      <span class="o-prob" id="oProb">O 50%</span>
+    </div>
+    <div class="prob-bar">
+      <div class="x-segment" id="xBar" style="width:50%"></div>
+      <div class="draw-segment" id="drawBar" style="width:0%"></div>
+      <div class="o-segment" id="oBar" style="width:50%"></div>
+    </div>
+    <div class="prob-depth" id="probDepth"></div>
+  </div>
+  <div class="board-wrapper">
+    <div class="board" id="board"></div>
+    <svg class="win-line-overlay" id="winLine" viewBox="0 0 100 100" preserveAspectRatio="none" style="display:none;"></svg>
+  </div>
+  <div class="controls">
+    <button id="resetBtn">New Game</button>
+    <button id="undoBtn">Undo</button>
+    <button id="leaveBtn" class="hidden">Leave</button>
+  </div>
+  <div class="hint">
+    Place marks anywhere on the 13&times;13 grid. Your moves define a 3&times;3 region &mdash; once formed, you're locked in.
+  </div>
 </div>
 
 <script>
@@ -317,6 +332,12 @@ let currentPlayer = 'X';
 let moves = [];
 let gameOver = false;
 let scores = { X: 0, O: 0 };
+
+// Multiplayer state
+let gameMode = 'local'; // 'local', 'online'
+let myRole = null;      // 'X' or 'O' (null in local)
+let peer = null;
+let conn = null;
 
 const boardEl = document.getElementById('board');
 const statusEl = document.getElementById('status');
@@ -354,156 +375,51 @@ function playVictoryMusic(player) {
   ensureAudio();
   const ctx = audioCtx;
   const now = ctx.currentTime;
-
-  // Victory fanfare melody
   const melody = player === 'X'
-    ? [ // Triumphant major fanfare
-      { f: 523, t: 0,    d: 0.15 },
-      { f: 523, t: 0.15, d: 0.15 },
-      { f: 523, t: 0.3,  d: 0.15 },
-      { f: 659, t: 0.5,  d: 0.3  },
-      { f: 523, t: 0.85, d: 0.15 },
-      { f: 659, t: 1.05, d: 0.15 },
-      { f: 784, t: 1.25, d: 0.6  },
-      { f: 784, t: 1.9,  d: 0.12 },
-      { f: 880, t: 2.05, d: 0.12 },
-      { f: 1047,t: 2.2,  d: 0.8  },
-    ]
-    : [ // Bright ascending fanfare
-      { f: 440, t: 0,    d: 0.15 },
-      { f: 440, t: 0.15, d: 0.15 },
-      { f: 440, t: 0.3,  d: 0.15 },
-      { f: 554, t: 0.5,  d: 0.3  },
-      { f: 440, t: 0.85, d: 0.15 },
-      { f: 554, t: 1.05, d: 0.15 },
-      { f: 659, t: 1.25, d: 0.6  },
-      { f: 659, t: 1.9,  d: 0.12 },
-      { f: 740, t: 2.05, d: 0.12 },
-      { f: 880, t: 2.2,  d: 0.8  },
-    ];
-
-  // Play melody
-  melody.forEach(({ f, t, d }) => {
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-    osc.type = 'square';
-    osc.frequency.setValueAtTime(f, now + t);
-    gain.gain.setValueAtTime(0, now + t);
-    gain.gain.linearRampToValueAtTime(0.08, now + t + 0.02);
-    gain.gain.setValueAtTime(0.08, now + t + d * 0.7);
-    gain.gain.exponentialRampToValueAtTime(0.001, now + t + d);
-    osc.connect(gain).connect(ctx.destination);
-    osc.start(now + t);
-    osc.stop(now + t + d + 0.05);
-  });
-
-  // Harmony layer (softer sine)
-  const harmony = player === 'X'
-    ? [
-      { f: 392, t: 0.5,  d: 0.3 },
-      { f: 392, t: 1.25, d: 0.6 },
-      { f: 523, t: 2.2,  d: 0.8 },
-    ]
-    : [
-      { f: 330, t: 0.5,  d: 0.3 },
-      { f: 330, t: 1.25, d: 0.6 },
-      { f: 440, t: 2.2,  d: 0.8 },
-    ];
-
-  harmony.forEach(({ f, t, d }) => {
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-    osc.type = 'sine';
-    osc.frequency.setValueAtTime(f, now + t);
-    gain.gain.setValueAtTime(0, now + t);
-    gain.gain.linearRampToValueAtTime(0.06, now + t + 0.02);
-    gain.gain.exponentialRampToValueAtTime(0.001, now + t + d);
-    osc.connect(gain).connect(ctx.destination);
-    osc.start(now + t);
-    osc.stop(now + t + d + 0.05);
-  });
-
-  // Bass drum hits
-  [0, 0.5, 1.25, 2.2].forEach(t => {
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-    osc.type = 'sine';
-    osc.frequency.setValueAtTime(100, now + t);
-    osc.frequency.exponentialRampToValueAtTime(40, now + t + 0.2);
-    gain.gain.setValueAtTime(0.2, now + t);
-    gain.gain.exponentialRampToValueAtTime(0.001, now + t + 0.3);
-    osc.connect(gain).connect(ctx.destination);
-    osc.start(now + t);
-    osc.stop(now + t + 0.35);
-  });
-
-  // Cymbal shimmer
-  const bufferSize = ctx.sampleRate * 0.8;
-  const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
-  const data = buffer.getChannelData(0);
-  for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
-  [0, 2.2].forEach(t => {
-    const noise = ctx.createBufferSource();
-    noise.buffer = buffer;
-    const bandpass = ctx.createBiquadFilter();
-    bandpass.type = 'bandpass';
-    bandpass.frequency.value = 8000;
-    bandpass.Q.value = 0.5;
-    const gain = ctx.createGain();
-    gain.gain.setValueAtTime(0.06, now + t);
-    gain.gain.exponentialRampToValueAtTime(0.001, now + t + 0.6);
-    noise.connect(bandpass).connect(gain).connect(ctx.destination);
-    noise.start(now + t);
-    noise.stop(now + t + 0.7);
-  });
+    ? [{f:523,t:0,d:.15},{f:523,t:.15,d:.15},{f:523,t:.3,d:.15},{f:659,t:.5,d:.3},{f:523,t:.85,d:.15},{f:659,t:1.05,d:.15},{f:784,t:1.25,d:.6},{f:784,t:1.9,d:.12},{f:880,t:2.05,d:.12},{f:1047,t:2.2,d:.8}]
+    : [{f:440,t:0,d:.15},{f:440,t:.15,d:.15},{f:440,t:.3,d:.15},{f:554,t:.5,d:.3},{f:440,t:.85,d:.15},{f:554,t:1.05,d:.15},{f:659,t:1.25,d:.6},{f:659,t:1.9,d:.12},{f:740,t:2.05,d:.12},{f:880,t:2.2,d:.8}];
+  melody.forEach(({f,t,d})=>{const o=ctx.createOscillator(),g=ctx.createGain();o.type='square';o.frequency.setValueAtTime(f,now+t);g.gain.setValueAtTime(0,now+t);g.gain.linearRampToValueAtTime(.08,now+t+.02);g.gain.setValueAtTime(.08,now+t+d*.7);g.gain.exponentialRampToValueAtTime(.001,now+t+d);o.connect(g).connect(ctx.destination);o.start(now+t);o.stop(now+t+d+.05);});
+  const harmony = player==='X'?[{f:392,t:.5,d:.3},{f:392,t:1.25,d:.6},{f:523,t:2.2,d:.8}]:[{f:330,t:.5,d:.3},{f:330,t:1.25,d:.6},{f:440,t:2.2,d:.8}];
+  harmony.forEach(({f,t,d})=>{const o=ctx.createOscillator(),g=ctx.createGain();o.type='sine';o.frequency.setValueAtTime(f,now+t);g.gain.setValueAtTime(0,now+t);g.gain.linearRampToValueAtTime(.06,now+t+.02);g.gain.exponentialRampToValueAtTime(.001,now+t+d);o.connect(g).connect(ctx.destination);o.start(now+t);o.stop(now+t+d+.05);});
+  [0,.5,1.25,2.2].forEach(t=>{const o=ctx.createOscillator(),g=ctx.createGain();o.type='sine';o.frequency.setValueAtTime(100,now+t);o.frequency.exponentialRampToValueAtTime(40,now+t+.2);g.gain.setValueAtTime(.2,now+t);g.gain.exponentialRampToValueAtTime(.001,now+t+.3);o.connect(g).connect(ctx.destination);o.start(now+t);o.stop(now+t+.35);});
+  const bs=ctx.sampleRate*.8,buf=ctx.createBuffer(1,bs,ctx.sampleRate),dd=buf.getChannelData(0);for(let i=0;i<bs;i++)dd[i]=Math.random()*2-1;
+  [0,2.2].forEach(t=>{const n=ctx.createBufferSource();n.buffer=buf;const bp=ctx.createBiquadFilter();bp.type='bandpass';bp.frequency.value=8000;bp.Q.value=.5;const g=ctx.createGain();g.gain.setValueAtTime(.06,now+t);g.gain.exponentialRampToValueAtTime(.001,now+t+.6);n.connect(bp).connect(g).connect(ctx.destination);n.start(now+t);n.stop(now+t+.7);});
 }
 
 function playDrawSound() {
   ensureAudio();
-  const ctx = audioCtx;
-  const now = ctx.currentTime;
-  const osc = ctx.createOscillator();
-  const gain = ctx.createGain();
-  osc.type = 'triangle';
-  osc.frequency.setValueAtTime(300, now);
+  const ctx = audioCtx; const now = ctx.currentTime;
+  const osc = ctx.createOscillator(); const gain = ctx.createGain();
+  osc.type = 'triangle'; osc.frequency.setValueAtTime(300, now);
   osc.frequency.linearRampToValueAtTime(200, now + 0.4);
-  gain.gain.setValueAtTime(0.12, now);
-  gain.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
-  osc.connect(gain).connect(ctx.destination);
-  osc.start(now);
-  osc.stop(now + 0.55);
+  gain.gain.setValueAtTime(0.12, now); gain.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
+  osc.connect(gain).connect(ctx.destination); osc.start(now); osc.stop(now + 0.55);
 }
 
 // ── Celebration ────────────────────────────────────────
 function celebrate(player) {
-  const xColor = 'rgba(99, 102, 241, 0.6)';
-  const oColor = 'rgba(236, 72, 153, 0.6)';
-  const burstColor = player === 'X' ? xColor : oColor;
+  const burstColor = player === 'X' ? 'rgba(99,102,241,0.6)' : 'rgba(236,72,153,0.6)';
   const bannerColor = player === 'X' ? '#6366f1' : '#ec4899';
 
-  // Screen flash
   const flash = document.createElement('div');
   flash.className = 'celebration-flash';
   document.body.appendChild(flash);
   setTimeout(() => flash.remove(), 900);
 
-  // Starburst ring
   const burst = document.createElement('div');
   burst.className = 'starburst';
   burst.style.setProperty('--burst-color', burstColor);
   document.body.appendChild(burst);
   setTimeout(() => burst.remove(), 1300);
 
-  // Second delayed burst
   setTimeout(() => {
-    const burst2 = document.createElement('div');
-    burst2.className = 'starburst';
-    burst2.style.setProperty('--burst-color', burstColor);
-    document.body.appendChild(burst2);
-    setTimeout(() => burst2.remove(), 1300);
+    const b2 = document.createElement('div');
+    b2.className = 'starburst';
+    b2.style.setProperty('--burst-color', burstColor);
+    document.body.appendChild(b2);
+    setTimeout(() => b2.remove(), 1300);
   }, 400);
 
-  // Winner banner
   const banner = document.createElement('div');
   banner.className = 'winner-banner';
   banner.style.setProperty('--banner-color', bannerColor);
@@ -515,204 +431,322 @@ function celebrate(player) {
     setTimeout(() => banner.remove(), 1000);
   }, 2200);
 
-  // Confetti - multiple waves
   for (let wave = 0; wave < 3; wave++) {
     setTimeout(() => {
       const container = document.createElement('div');
       container.className = 'confetti-container';
       document.body.appendChild(container);
-
       const colors = player === 'X'
-        ? ['#6366f1', '#818cf8', '#a5b4fc', '#c7d2fe', '#a855f7', '#fbbf24']
-        : ['#ec4899', '#f472b6', '#f9a8d4', '#fbcfe8', '#a855f7', '#fbbf24'];
-
+        ? ['#6366f1','#818cf8','#a5b4fc','#c7d2fe','#a855f7','#fbbf24']
+        : ['#ec4899','#f472b6','#f9a8d4','#fbcfe8','#a855f7','#fbbf24'];
       const count = wave === 0 ? 60 : 40;
       for (let i = 0; i < count; i++) {
-        const confetti = document.createElement('div');
-        confetti.className = 'confetti';
-        const color = colors[Math.floor(Math.random() * colors.length)];
-        const left = Math.random() * 100;
-        const delay = Math.random() * 0.4;
-        const duration = 1.5 + Math.random() * 2;
-        const size = 4 + Math.random() * 10;
-        const shapes = ['50%', '2px', '0'];
-        const shape = shapes[Math.floor(Math.random() * shapes.length)];
-        confetti.style.cssText = `
-          left:${left}%; top:-10px;
-          width:${size}px; height:${size * (0.5 + Math.random())}px;
-          background:${color}; border-radius:${shape};
-          animation-delay:${delay}s; animation-duration:${duration}s;
-        `;
-        container.appendChild(confetti);
+        const c = document.createElement('div');
+        c.className = 'confetti';
+        const col = colors[Math.floor(Math.random()*colors.length)];
+        const size = 4 + Math.random()*10;
+        const shapes = ['50%','2px','0'];
+        c.style.cssText = `left:${Math.random()*100}%;top:-10px;width:${size}px;height:${size*(0.5+Math.random())}px;background:${col};border-radius:${shapes[Math.floor(Math.random()*3)]};animation-delay:${Math.random()*0.4}s;animation-duration:${1.5+Math.random()*2}s;`;
+        container.appendChild(c);
       }
       setTimeout(() => container.remove(), 4000);
     }, wave * 600);
   }
 
-  // Play victory music
   playVictoryMusic(player);
 }
 
-// ── Win Probability (Minimax + full enumeration with memoization) ──
-// Looks forward through ALL remaining moves to the end of the game.
-// Uses memoization on the board state for speed.
-
+// ── Win Probability ────────────────────────────────────
 function boardStateKey(player) {
-  // Build a compact key from the grid contents in the relevant region
-  let minR = SIZE, maxR = -1, minC = SIZE, maxC = -1;
-  for (let r = 0; r < SIZE; r++)
-    for (let c = 0; c < SIZE; c++)
-      if (grid[r][c]) {
-        if (r < minR) minR = r;
-        if (r > maxR) maxR = r;
-        if (c < minC) minC = c;
-        if (c > maxC) maxC = c;
-      }
-  if (maxR === -1) return player + ':empty';
-
-  // The relevant region is the potential 5x5 area that could contain valid moves
-  const r0 = Math.max(0, minR - 2);
-  const r1 = Math.min(SIZE - 1, maxR + 2);
-  const c0 = Math.max(0, minC - 2);
-  const c1 = Math.min(SIZE - 1, maxC + 2);
-
-  let key = player + ':' + r0 + ',' + c0 + ',';
-  for (let r = r0; r <= r1; r++)
-    for (let c = c0; c <= c1; c++)
-      key += grid[r][c] || '.';
+  let minR=SIZE,maxR=-1,minC=SIZE,maxC=-1;
+  for(let r=0;r<SIZE;r++)for(let c=0;c<SIZE;c++)if(grid[r][c]){if(r<minR)minR=r;if(r>maxR)maxR=r;if(c<minC)minC=c;if(c>maxC)maxC=c;}
+  if(maxR===-1)return player+':empty';
+  const r0=Math.max(0,minR-2),r1=Math.min(SIZE-1,maxR+2),c0=Math.max(0,minC-2),c1=Math.min(SIZE-1,maxC+2);
+  let key=player+':'+r0+','+c0+',';
+  for(let r=r0;r<=r1;r++)for(let c=c0;c<=c1;c++)key+=grid[r][c]||'.';
   return key;
 }
 
 function gridHasWon(p) {
-  for (let r = 0; r < SIZE; r++)
-    for (let c = 0; c < SIZE; c++) {
-      if (grid[r][c] !== p) continue;
-      if (c + 2 < SIZE && grid[r][c+1] === p && grid[r][c+2] === p) return true;
-      if (r + 2 < SIZE && grid[r+1][c] === p && grid[r+2][c] === p) return true;
-      if (r + 2 < SIZE && c + 2 < SIZE && grid[r+1][c+1] === p && grid[r+2][c+2] === p) return true;
-      if (r + 2 < SIZE && c >= 2 && grid[r+1][c-1] === p && grid[r+2][c-2] === p) return true;
-    }
+  for(let r=0;r<SIZE;r++)for(let c=0;c<SIZE;c++){
+    if(grid[r][c]!==p)continue;
+    if(c+2<SIZE&&grid[r][c+1]===p&&grid[r][c+2]===p)return true;
+    if(r+2<SIZE&&grid[r+1][c]===p&&grid[r+2][c]===p)return true;
+    if(r+2<SIZE&&c+2<SIZE&&grid[r+1][c+1]===p&&grid[r+2][c+2]===p)return true;
+    if(r+2<SIZE&&c>=2&&grid[r+1][c-1]===p&&grid[r+2][c-2]===p)return true;
+  }
   return false;
 }
 
 function getValidMovesFromGrid() {
-  let minR = SIZE, maxR = -1, minC = SIZE, maxC = -1;
-  let hasPieces = false;
-  for (let r = 0; r < SIZE; r++)
-    for (let c = 0; c < SIZE; c++)
-      if (grid[r][c]) {
-        hasPieces = true;
-        if (r < minR) minR = r;
-        if (r > maxR) maxR = r;
-        if (c < minC) minC = c;
-        if (c > maxC) maxC = c;
-      }
-  if (!hasPieces) return [];
-
-  const result = [];
-  // Only scan the area that could possibly be valid (within 2 of bounds)
-  const scanR0 = Math.max(0, minR - 2);
-  const scanR1 = Math.min(SIZE - 1, maxR + 2);
-  const scanC0 = Math.max(0, minC - 2);
-  const scanC1 = Math.min(SIZE - 1, maxC + 2);
-
-  for (let r = scanR0; r <= scanR1; r++)
-    for (let c = scanC0; c <= scanC1; c++) {
-      if (grid[r][c]) continue;
-      const nMinR = Math.min(minR, r), nMaxR = Math.max(maxR, r);
-      const nMinC = Math.min(minC, c), nMaxC = Math.max(maxC, c);
-      if (nMaxR - nMinR < WIN_SIZE && nMaxC - nMinC < WIN_SIZE)
-        result.push([r, c]);
-    }
+  let minR=SIZE,maxR=-1,minC=SIZE,maxC=-1,has=false;
+  for(let r=0;r<SIZE;r++)for(let c=0;c<SIZE;c++)if(grid[r][c]){has=true;if(r<minR)minR=r;if(r>maxR)maxR=r;if(c<minC)minC=c;if(c>maxC)maxC=c;}
+  if(!has)return[];
+  const result=[];
+  const s0=Math.max(0,minR-2),s1=Math.min(SIZE-1,maxR+2),t0=Math.max(0,minC-2),t1=Math.min(SIZE-1,maxC+2);
+  for(let r=s0;r<=s1;r++)for(let c=t0;c<=t1;c++){
+    if(grid[r][c])continue;
+    if(Math.max(maxR,r)-Math.min(minR,r)<WIN_SIZE&&Math.max(maxC,c)-Math.min(minC,c)<WIN_SIZE)result.push([r,c]);
+  }
   return result;
 }
 
 function enumerateOutcomes(player, memo) {
-  const key = boardStateKey(player);
-  if (memo.has(key)) return memo.get(key);
-
-  // Check terminal states
-  if (gridHasWon('X')) { const r = { x: 1, o: 0, d: 0 }; memo.set(key, r); return r; }
-  if (gridHasWon('O')) { const r = { x: 0, o: 1, d: 0 }; memo.set(key, r); return r; }
-
-  const validMoves = getValidMovesFromGrid();
-  if (validMoves.length === 0) { const r = { x: 0, o: 0, d: 1 }; memo.set(key, r); return r; }
-
-  const totals = { x: 0, o: 0, d: 0 };
-  const next = player === 'X' ? 'O' : 'X';
-
-  for (const [r, c] of validMoves) {
-    grid[r][c] = player;
-    const sub = enumerateOutcomes(next, memo);
-    totals.x += sub.x;
-    totals.o += sub.o;
-    totals.d += sub.d;
-    grid[r][c] = null;
-  }
-
-  memo.set(key, totals);
-  return totals;
+  const key=boardStateKey(player);
+  if(memo.has(key))return memo.get(key);
+  if(gridHasWon('X')){const r={x:1,o:0,d:0};memo.set(key,r);return r;}
+  if(gridHasWon('O')){const r={x:0,o:1,d:0};memo.set(key,r);return r;}
+  const vm=getValidMovesFromGrid();
+  if(vm.length===0){const r={x:0,o:0,d:1};memo.set(key,r);return r;}
+  const totals={x:0,o:0,d:0};
+  const next=player==='X'?'O':'X';
+  for(const[r,c]of vm){grid[r][c]=player;const s=enumerateOutcomes(next,memo);totals.x+=s.x;totals.o+=s.o;totals.d+=s.d;grid[r][c]=null;}
+  memo.set(key,totals);return totals;
 }
 
 function computeProbabilities() {
-  if (moves.length === 0) return { x: 50, o: 50, draw: 0, depth: 0 };
-
-  const memo = new Map();
-  const result = enumerateOutcomes(currentPlayer, memo);
-  const total = result.x + result.o + result.d;
-  if (total === 0) return { x: 50, o: 50, draw: 0, depth: 0 };
-
-  // Calculate max remaining moves (depth of look-ahead)
-  const validNow = getValidMovesFromGrid();
-  const emptyCells = validNow.length;
-  // We look all the way to the end, but report how many moves ahead
-  const movesAhead = emptyCells; // we enumerate all remaining
-
-  return {
-    x: Math.round(result.x / total * 100),
-    o: Math.round(result.o / total * 100),
-    draw: Math.round(result.d / total * 100),
-    depth: movesAhead
-  };
+  if(moves.length===0)return{x:50,o:50,draw:0,depth:0};
+  const memo=new Map();
+  const result=enumerateOutcomes(currentPlayer,memo);
+  const total=result.x+result.o+result.d;
+  if(total===0)return{x:50,o:50,draw:0,depth:0};
+  return{x:Math.round(result.x/total*100),o:Math.round(result.o/total*100),draw:Math.round(result.d/total*100),depth:getValidMovesFromGrid().length};
 }
 
 function updateProbBar() {
-  if (gameOver) return;
+  if(gameOver)return;
+  const probs=moves.length===0?{x:50,o:50,draw:0,depth:0}:computeProbabilities();
+  document.getElementById('xProb').textContent=`X ${probs.x}%`;
+  document.getElementById('drawProb').textContent=`Draw ${probs.draw}%`;
+  document.getElementById('oProb').textContent=`O ${probs.o}%`;
+  document.getElementById('xBar').style.width=probs.x+'%';
+  document.getElementById('drawBar').style.width=probs.draw+'%';
+  document.getElementById('oBar').style.width=probs.o+'%';
+  const d=document.getElementById('probDepth');
+  d.textContent=probs.depth>0?`analyzing ${probs.depth} move${probs.depth!==1?'s':''} ahead`:'';
+}
 
-  let probs;
-  if (moves.length === 0) {
-    probs = { x: 50, o: 50, draw: 0, depth: 0 };
-  } else {
-    probs = computeProbabilities();
-  }
+function setProbResult(xP,oP,dP) {
+  document.getElementById('xProb').textContent=`X ${xP}%`;
+  document.getElementById('oProb').textContent=`O ${oP}%`;
+  document.getElementById('drawProb').textContent=`Draw ${dP}%`;
+  document.getElementById('xBar').style.width=xP+'%';
+  document.getElementById('oBar').style.width=oP+'%';
+  document.getElementById('drawBar').style.width=dP+'%';
+  document.getElementById('probDepth').textContent='';
+}
 
-  document.getElementById('xProb').textContent = `X ${probs.x}%`;
-  document.getElementById('drawProb').textContent = `Draw ${probs.draw}%`;
-  document.getElementById('oProb').textContent = `O ${probs.o}%`;
-  document.getElementById('xBar').style.width = probs.x + '%';
-  document.getElementById('drawBar').style.width = probs.draw + '%';
-  document.getElementById('oBar').style.width = probs.o + '%';
+// ── Multiplayer (PeerJS) ──────────────────────────────
+function generateCode() {
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  let code = '';
+  for (let i = 0; i < 4; i++) code += chars[Math.floor(Math.random() * chars.length)];
+  return code;
+}
 
-  const depthEl = document.getElementById('probDepth');
-  if (probs.depth > 0) {
-    depthEl.textContent = `analyzing ${probs.depth} move${probs.depth !== 1 ? 's' : ''} ahead`;
-  } else {
-    depthEl.textContent = '';
+function sendMsg(data) {
+  if (conn && conn.open) conn.send(JSON.stringify(data));
+}
+
+function handleMessage(raw) {
+  let msg;
+  try { msg = JSON.parse(raw); } catch { return; }
+
+  if (msg.type === 'move') {
+    // Opponent made a move
+    const { row, col } = msg;
+    if (!isValid(row, col)) return;
+    playPlaceSound(currentPlayer);
+    grid[row][col] = currentPlayer;
+    moves.push({ row, col, player: currentPlayer });
+
+    const winLine = checkWin(currentPlayer);
+    if (winLine) {
+      gameOver = true;
+      scores[currentPlayer]++;
+      document.getElementById('xWins').textContent = scores.X;
+      document.getElementById('oWins').textContent = scores.O;
+      render(new Set(winLine));
+      drawWinLine(winLine, currentPlayer);
+      statusEl.innerHTML = `<span class="winner">${currentPlayer} wins!</span>`;
+      setProbResult(currentPlayer === 'X' ? 100 : 0, currentPlayer === 'O' ? 100 : 0, 0);
+      setTimeout(() => celebrate(currentPlayer), 150);
+      return;
+    }
+
+    currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+    const validCells = getValidCells();
+    if (validCells.size === 0 && !gameOver) {
+      gameOver = true;
+      render();
+      statusEl.innerHTML = `It's a draw!`;
+      setProbResult(0, 0, 100);
+      playDrawSound();
+      return;
+    }
+
+    render();
+    updateStatus();
+    updateProbBar();
+  } else if (msg.type === 'reset') {
+    initGame();
+  } else if (msg.type === 'undo') {
+    // Opponent requests undo of their last move
+    if (moves.length === 0 || gameOver) return;
+    const last = moves[moves.length - 1];
+    // Only allow undo of the sender's own move (opponent's role)
+    const opponentRole = myRole === 'X' ? 'O' : 'X';
+    if (last.player !== opponentRole) return;
+    moves.pop();
+    grid[last.row][last.col] = null;
+    currentPlayer = last.player;
+    winLineEl.style.display = 'none';
+    winLineEl.innerHTML = '';
+    render();
+    updateStatus();
+    updateProbBar();
   }
 }
 
-function setProbResult(xPct, oPct, drawPct) {
-  document.getElementById('xProb').textContent = `X ${xPct}%`;
-  document.getElementById('oProb').textContent = `O ${oPct}%`;
-  document.getElementById('drawProb').textContent = `Draw ${drawPct}%`;
-  document.getElementById('xBar').style.width = xPct + '%';
-  document.getElementById('oBar').style.width = oPct + '%';
-  document.getElementById('drawBar').style.width = drawPct + '%';
-  document.getElementById('probDepth').textContent = '';
+function setupConnection(connection) {
+  conn = connection;
+  conn.on('open', () => {
+    document.getElementById('connectionBar').classList.remove('hidden');
+    document.getElementById('connectionDot').classList.remove('disconnected');
+    document.getElementById('connectionText').textContent = 'Connected';
+  });
+  conn.on('data', handleMessage);
+  conn.on('close', () => {
+    document.getElementById('connectionDot').classList.add('disconnected');
+    document.getElementById('connectionText').textContent = 'Opponent disconnected';
+  });
+  conn.on('error', () => {
+    document.getElementById('connectionDot').classList.add('disconnected');
+    document.getElementById('connectionText').textContent = 'Connection error';
+  });
+}
+
+function createGame() {
+  const code = generateCode();
+  const peerId = 'ttt13-' + code;
+
+  document.getElementById('lobbyMenu').classList.add('hidden');
+  document.getElementById('createView').classList.remove('hidden');
+  document.getElementById('gameCode').textContent = code;
+
+  peer = new Peer(peerId);
+
+  peer.on('open', () => {
+    document.getElementById('createStatus').textContent = 'Waiting for opponent to join...';
+  });
+
+  peer.on('connection', (connection) => {
+    myRole = 'X';
+    gameMode = 'online';
+    setupConnection(connection);
+    startGame();
+  });
+
+  peer.on('error', (err) => {
+    const statusEl = document.getElementById('createStatus');
+    if (err.type === 'unavailable-id') {
+      statusEl.textContent = 'Code taken. Try again.';
+      statusEl.classList.add('error');
+    } else {
+      statusEl.textContent = 'Connection error: ' + err.type;
+      statusEl.classList.add('error');
+    }
+  });
+
+  // Copy on click
+  document.getElementById('gameCode').onclick = () => {
+    navigator.clipboard.writeText(code).then(() => {
+      document.querySelector('.copy-hint').textContent = 'Copied!';
+      setTimeout(() => { document.querySelector('.copy-hint').textContent = 'Click the code to copy'; }, 1500);
+    });
+  };
+}
+
+function joinGame() {
+  const code = document.getElementById('joinInput').value.trim().toUpperCase();
+  if (!code) return;
+
+  const joinStatus = document.getElementById('joinStatus');
+  joinStatus.textContent = 'Connecting...';
+  joinStatus.classList.remove('error');
+
+  peer = new Peer();
+
+  peer.on('open', () => {
+    const peerId = 'ttt13-' + code;
+    const connection = peer.connect(peerId, { reliable: true });
+
+    connection.on('open', () => {
+      myRole = 'O';
+      gameMode = 'online';
+      setupConnection(connection);
+      startGame();
+    });
+
+    connection.on('error', () => {
+      joinStatus.textContent = 'Could not connect. Check the code.';
+      joinStatus.classList.add('error');
+    });
+
+    // Timeout for connection
+    setTimeout(() => {
+      if (!conn || !conn.open) {
+        joinStatus.textContent = 'Could not find game. Check the code.';
+        joinStatus.classList.add('error');
+      }
+    }, 8000);
+  });
+
+  peer.on('error', (err) => {
+    joinStatus.textContent = 'Error: ' + err.type;
+    joinStatus.classList.add('error');
+  });
+}
+
+function startLocalGame() {
+  gameMode = 'local';
+  myRole = null;
+  startGame();
+}
+
+function startGame() {
+  document.getElementById('lobby').classList.add('hidden');
+  document.getElementById('gameContainer').classList.remove('hidden');
+
+  if (gameMode === 'online') {
+    document.getElementById('leaveBtn').classList.remove('hidden');
+    document.getElementById('connectionBar').classList.remove('hidden');
+  } else {
+    document.getElementById('leaveBtn').classList.add('hidden');
+    document.getElementById('connectionBar').classList.add('hidden');
+  }
+
+  initGame();
+}
+
+function leaveGame() {
+  if (conn) conn.close();
+  if (peer) peer.destroy();
+  conn = null;
+  peer = null;
+  gameMode = 'local';
+  myRole = null;
+
+  document.getElementById('gameContainer').classList.add('hidden');
+  document.getElementById('lobby').classList.remove('hidden');
+  document.getElementById('lobbyMenu').classList.remove('hidden');
+  document.getElementById('createView').classList.add('hidden');
+  document.getElementById('joinView').classList.add('hidden');
+  document.getElementById('connectionBar').classList.add('hidden');
 }
 
 // ── Game Logic ─────────────────────────────────────────
-function init() {
+function initGame() {
   grid = Array.from({ length: SIZE }, () => Array(SIZE).fill(null));
   currentPlayer = 'X';
   moves = [];
@@ -724,97 +758,71 @@ function init() {
   updateProbBar();
 }
 
+function isMyTurn() {
+  if (gameMode === 'local') return true;
+  return currentPlayer === myRole;
+}
+
 function getBounds() {
-  let minR = SIZE, maxR = -1, minC = SIZE, maxC = -1;
-  for (const m of moves) {
-    minR = Math.min(minR, m.row);
-    maxR = Math.max(maxR, m.row);
-    minC = Math.min(minC, m.col);
-    maxC = Math.max(maxC, m.col);
-  }
-  if (maxR === -1) return null;
-  return { minR, maxR, minC, maxC };
+  let minR=SIZE,maxR=-1,minC=SIZE,maxC=-1;
+  for(const m of moves){minR=Math.min(minR,m.row);maxR=Math.max(maxR,m.row);minC=Math.min(minC,m.col);maxC=Math.max(maxC,m.col);}
+  if(maxR===-1)return null;
+  return{minR,maxR,minC,maxC};
 }
 
 function isValid(row, col) {
-  if (grid[row][col] !== null || gameOver) return false;
-  if (moves.length === 0) return true;
-  const b = getBounds();
-  const newMinR = Math.min(b.minR, row);
-  const newMaxR = Math.max(b.maxR, row);
-  const newMinC = Math.min(b.minC, col);
-  const newMaxC = Math.max(b.maxC, col);
-  return (newMaxR - newMinR < WIN_SIZE) && (newMaxC - newMinC < WIN_SIZE);
+  if(grid[row][col]!==null||gameOver)return false;
+  if(moves.length===0)return true;
+  const b=getBounds();
+  return(Math.max(b.maxR,row)-Math.min(b.minR,row)<WIN_SIZE)&&(Math.max(b.maxC,col)-Math.min(b.minC,col)<WIN_SIZE);
 }
 
 function getValidCells() {
-  const valid = [];
-  for (let r = 0; r < SIZE; r++)
-    for (let c = 0; c < SIZE; c++)
-      if (isValid(r, c)) valid.push(`${r}-${c}`);
+  const valid=[];
+  for(let r=0;r<SIZE;r++)for(let c=0;c<SIZE;c++)if(isValid(r,c))valid.push(`${r}-${c}`);
   return new Set(valid);
 }
 
 function getRegionBoundary() {
-  const b = getBounds();
-  if (!b) return null;
-  const spanR = b.maxR - b.minR;
-  const spanC = b.maxC - b.minC;
-  let rStart, rEnd, cStart, cEnd;
-  if (spanR === 2) { rStart = b.minR; rEnd = b.maxR; }
-  else if (spanR === 1) { rStart = Math.max(0, b.maxR - 2); rEnd = Math.min(SIZE - 1, b.minR + 2); }
-  else { rStart = Math.max(0, b.minR - 2); rEnd = Math.min(SIZE - 1, b.minR + 2); }
-  if (spanC === 2) { cStart = b.minC; cEnd = b.maxC; }
-  else if (spanC === 1) { cStart = Math.max(0, b.maxC - 2); cEnd = Math.min(SIZE - 1, b.minC + 2); }
-  else { cStart = Math.max(0, b.minC - 2); cEnd = Math.min(SIZE - 1, b.minC + 2); }
-  return { rStart, rEnd, cStart, cEnd };
+  const b=getBounds();if(!b)return null;
+  const spanR=b.maxR-b.minR,spanC=b.maxC-b.minC;
+  let rS,rE,cS,cE;
+  if(spanR===2){rS=b.minR;rE=b.maxR;}else if(spanR===1){rS=Math.max(0,b.maxR-2);rE=Math.min(SIZE-1,b.minR+2);}else{rS=Math.max(0,b.minR-2);rE=Math.min(SIZE-1,b.minR+2);}
+  if(spanC===2){cS=b.minC;cE=b.maxC;}else if(spanC===1){cS=Math.max(0,b.maxC-2);cE=Math.min(SIZE-1,b.minC+2);}else{cS=Math.max(0,b.minC-2);cE=Math.min(SIZE-1,b.minC+2);}
+  return{rStart:rS,rEnd:rE,cStart:cS,cEnd:cE};
 }
 
 function checkWin(player) {
-  const placed = moves.filter(m => m.player === player);
-  if (placed.length < 3) return null;
-  const set = new Set(placed.map(m => `${m.row}-${m.col}`));
-  const dirs = [[0,1],[1,0],[1,1],[1,-1]];
-  for (const m of placed) {
-    for (const [dr, dc] of dirs) {
-      const line = [];
-      for (let i = 0; i < 3; i++) {
-        const key = `${m.row + dr*i}-${m.col + dc*i}`;
-        if (set.has(key)) line.push(key);
-      }
-      if (line.length === 3) return line;
-    }
-  }
+  const placed=moves.filter(m=>m.player===player);
+  if(placed.length<3)return null;
+  const set=new Set(placed.map(m=>`${m.row}-${m.col}`));
+  const dirs=[[0,1],[1,0],[1,1],[1,-1]];
+  for(const m of placed)for(const[dr,dc]of dirs){const line=[];for(let i=0;i<3;i++){const key=`${m.row+dr*i}-${m.col+dc*i}`;if(set.has(key))line.push(key);}if(line.length===3)return line;}
   return null;
 }
 
 function drawWinLine(winCells, player) {
-  const coords = winCells.map(key => {
-    const [r, c] = key.split('-').map(Number);
-    return { x: (c + 0.5) / SIZE * 100, y: (r + 0.5) / SIZE * 100 };
-  });
-  coords.sort((a, b) => a.x - b.x || a.y - b.y);
-  const start = coords[0], end = coords[coords.length - 1];
-  const dx = end.x - start.x, dy = end.y - start.y;
-  const len = Math.sqrt(dx * dx + dy * dy);
-  const extend = 2.5;
-  const ex = (dx / len) * extend, ey = (dy / len) * extend;
-  const color = player === 'X' ? 'rgba(99, 102, 241, 0.9)' : 'rgba(236, 72, 153, 0.9)';
-
-  winLineEl.style.display = 'block';
-  winLineEl.style.setProperty('--line-color', color);
-  winLineEl.innerHTML = `
-    <line x1="${start.x - ex}" y1="${start.y - ey}" x2="${end.x + ex}" y2="${end.y + ey}"
-      stroke="${color}" stroke-dasharray="1000" stroke-dashoffset="1000"
-      style="animation: lineGrow 0.4s 0.15s ease-out forwards;" />
-  `;
+  const coords=winCells.map(key=>{const[r,c]=key.split('-').map(Number);return{x:(c+.5)/SIZE*100,y:(r+.5)/SIZE*100};});
+  coords.sort((a,b)=>a.x-b.x||a.y-b.y);
+  const start=coords[0],end=coords[coords.length-1];
+  const dx=end.x-start.x,dy=end.y-start.y,len=Math.sqrt(dx*dx+dy*dy);
+  const ext=2.5,ex=(dx/len)*ext,ey=(dy/len)*ext;
+  const color=player==='X'?'rgba(99,102,241,0.9)':'rgba(236,72,153,0.9)';
+  winLineEl.style.display='block';
+  winLineEl.style.setProperty('--line-color',color);
+  winLineEl.innerHTML=`<line x1="${start.x-ex}" y1="${start.y-ey}" x2="${end.x+ex}" y2="${end.y+ey}" stroke="${color}" stroke-dasharray="1000" stroke-dashoffset="1000" style="animation:lineGrow .4s .15s ease-out forwards;"/>`;
 }
 
 function placeMove(row, col) {
   if (!isValid(row, col)) return;
+  if (!isMyTurn()) return;
+
   playPlaceSound(currentPlayer);
   grid[row][col] = currentPlayer;
   moves.push({ row, col, player: currentPlayer });
+
+  // Send to peer
+  if (gameMode === 'online') sendMsg({ type: 'move', row, col });
 
   const winLine = checkWin(currentPlayer);
   if (winLine) {
@@ -852,30 +860,50 @@ function updateStatus() {
   let extra = '';
   if (moves.length === 0) extra = ' &mdash; place anywhere';
   else if (b) {
-    const spanR = b.maxR - b.minR;
-    const spanC = b.maxC - b.minC;
+    const spanR = b.maxR - b.minR, spanC = b.maxC - b.minC;
     if (spanR === 2 && spanC === 2) extra = ' &mdash; grid locked';
     else extra = ' &mdash; grid forming';
   }
-  statusEl.innerHTML = `<span class="${cls}">${currentPlayer}</span>'s turn${extra}`;
+
+  let youTag = '';
+  if (gameMode === 'online') {
+    if (isMyTurn()) youTag = ' <span class="you-tag">(your turn)</span>';
+    else youTag = ' <span class="you-tag">(waiting)</span>';
+  }
+
+  statusEl.innerHTML = `<span class="${cls}">${currentPlayer}</span>'s turn${extra}${youTag}`;
 }
 
 function undo() {
   if (moves.length === 0 || gameOver) return;
-  const last = moves.pop();
+  const last = moves[moves.length - 1];
+
+  // In online mode, only undo your own last move
+  if (gameMode === 'online' && last.player !== myRole) return;
+
+  moves.pop();
   grid[last.row][last.col] = null;
   currentPlayer = last.player;
   winLineEl.style.display = 'none';
   winLineEl.innerHTML = '';
+
+  if (gameMode === 'online') sendMsg({ type: 'undo' });
+
   render();
   updateStatus();
   updateProbBar();
+}
+
+function resetGame() {
+  if (gameMode === 'online') sendMsg({ type: 'reset' });
+  initGame();
 }
 
 function render(winCells = null) {
   const validCells = getValidCells();
   const bounds = getBounds();
   const region = getRegionBoundary();
+  const myTurn = isMyTurn();
 
   boardEl.innerHTML = '';
   for (let r = 0; r < SIZE; r++) {
@@ -894,6 +922,8 @@ function render(winCells = null) {
 
       if (validCells.has(key) && !gameOver) cell.classList.add('valid');
       else if (!grid[r][c] && !gameOver) cell.classList.add('locked');
+
+      if (!myTurn && !gameOver && !grid[r][c]) cell.classList.add('not-my-turn');
 
       if (winCells && winCells.has(key)) cell.classList.add('win-cell');
 
@@ -915,9 +945,38 @@ function render(winCells = null) {
   }
 }
 
-resetBtn.addEventListener('click', init);
+// ── Lobby Event Handlers ──────────────────────────────
+document.getElementById('createBtn').addEventListener('click', createGame);
+document.getElementById('joinBtn').addEventListener('click', () => {
+  document.getElementById('lobbyMenu').classList.add('hidden');
+  document.getElementById('joinView').classList.remove('hidden');
+  document.getElementById('joinInput').focus();
+});
+document.getElementById('localBtn').addEventListener('click', startLocalGame);
+document.getElementById('joinConnect').addEventListener('click', joinGame);
+document.getElementById('joinInput').addEventListener('keydown', e => { if (e.key === 'Enter') joinGame(); });
+
+document.getElementById('createBack').addEventListener('click', () => {
+  if (peer) peer.destroy();
+  peer = null;
+  document.getElementById('createView').classList.add('hidden');
+  document.getElementById('lobbyMenu').classList.remove('hidden');
+  document.getElementById('createStatus').classList.remove('error');
+  document.getElementById('createStatus').textContent = 'Waiting for opponent to join...';
+});
+
+document.getElementById('joinBack').addEventListener('click', () => {
+  if (peer) peer.destroy();
+  peer = null;
+  document.getElementById('joinView').classList.add('hidden');
+  document.getElementById('lobbyMenu').classList.remove('hidden');
+  document.getElementById('joinStatus').textContent = '';
+  document.getElementById('joinStatus').classList.remove('error');
+});
+
+resetBtn.addEventListener('click', resetGame);
 undoBtn.addEventListener('click', undo);
-init();
+document.getElementById('leaveBtn').addEventListener('click', leaveGame);
 </script>
 </body>
 </html>
