@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tic-Tac-Toe 13x13</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #0a0a0f;
+    color: #e0e0e0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    overflow: hidden;
+  }
+
+  h1 {
+    font-size: 1.6rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    background: linear-gradient(135deg, #6366f1, #a855f7, #ec4899);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .status {
+    font-size: 1.1rem;
+    font-weight: 500;
+    height: 1.4em;
+    transition: all 0.3s;
+  }
+
+  .status .x { color: #6366f1; }
+  .status .o { color: #ec4899; }
+  .status .winner {
+    background: linear-gradient(135deg, #6366f1, #ec4899);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: 700;
+    font-size: 1.3rem;
+  }
+
+  .board-wrapper {
+    position: relative;
+    width: min(92vw, 560px);
+    aspect-ratio: 1;
+  }
+
+  .board {
+    display: grid;
+    grid-template-columns: repeat(13, 1fr);
+    gap: 2px;
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    backdrop-filter: blur(10px);
+    width: 100%;
+    height: 100%;
+  }
+
+  .win-line-overlay {
+    position: absolute;
+    top: 10px; left: 10px; right: 10px; bottom: 10px;
+    pointer-events: none;
+    z-index: 10;
+  }
+
+  .win-line-overlay line {
+    stroke-linecap: round;
+    stroke-width: 1.2;
+    filter: drop-shadow(0 0 6px var(--line-color)) drop-shadow(0 0 14px var(--line-color));
+  }
+
+  .cell {
+    aspect-ratio: 1;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: clamp(10px, 2.8vw, 18px);
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background: rgba(255, 255, 255, 0.02);
+    position: relative;
+  }
+
+  .cell:hover:not(.taken):not(.locked) {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.15);
+    transform: scale(1.08);
+  }
+
+  .cell.valid {
+    background: rgba(255, 255, 255, 0.04);
+    border-color: rgba(255, 255, 255, 0.1);
+  }
+
+  .cell.valid:hover:not(.taken) {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(163, 130, 255, 0.4);
+    box-shadow: 0 0 12px rgba(163, 130, 255, 0.15);
+  }
+
+  .cell.locked { opacity: 0.2; cursor: default; border-color: transparent; }
+  .cell.taken { cursor: default; }
+
+  .cell .mark { animation: popIn 0.25s cubic-bezier(0.34, 1.56, 0.64, 1); }
+  .cell .mark.x { color: #6366f1; text-shadow: 0 0 12px rgba(99, 102, 241, 0.4); }
+  .cell .mark.o { color: #ec4899; text-shadow: 0 0 12px rgba(236, 72, 153, 0.4); }
+
+  .cell.win-cell {
+    animation: winPulse 0.6s ease;
+    background: rgba(255, 255, 255, 0.1);
+    z-index: 5;
+  }
+  .cell.win-cell .mark.x { text-shadow: 0 0 24px rgba(99, 102, 241, 0.9); }
+  .cell.win-cell .mark.o { text-shadow: 0 0 24px rgba(236, 72, 153, 0.9); }
+
+  .cell.boundary-top { border-top: 2px solid rgba(163, 130, 255, 0.25); }
+  .cell.boundary-bottom { border-bottom: 2px solid rgba(163, 130, 255, 0.25); }
+  .cell.boundary-left { border-left: 2px solid rgba(163, 130, 255, 0.25); }
+  .cell.boundary-right { border-right: 2px solid rgba(163, 130, 255, 0.25); }
+
+  @keyframes popIn {
+    0% { transform: scale(0); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+  @keyframes winPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.15); }
+  }
+  @keyframes lineGrow {
+    0% { stroke-dashoffset: 1000; }
+    100% { stroke-dashoffset: 0; }
+  }
+
+  /* Celebration */
+  .confetti-container {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    pointer-events: none; z-index: 100; overflow: hidden;
+  }
+  .confetti {
+    position: absolute; opacity: 0;
+    animation: confettiFall linear forwards;
+  }
+  @keyframes confettiFall {
+    0% { opacity: 1; transform: translateY(0) rotate(0deg) scale(1); }
+    80% { opacity: 1; }
+    100% { opacity: 0; transform: translateY(100vh) rotate(720deg) scale(0.5); }
+  }
+  .celebration-flash {
+    position: fixed; inset: 0; pointer-events: none; z-index: 99;
+    animation: flash 0.8s ease-out forwards;
+  }
+  @keyframes flash {
+    0% { background: rgba(255, 255, 255, 0.25); }
+    100% { background: transparent; }
+  }
+
+  /* Starburst ring */
+  .starburst {
+    position: fixed; top: 50%; left: 50%;
+    width: 300px; height: 300px;
+    margin: -150px 0 0 -150px;
+    border-radius: 50%;
+    pointer-events: none; z-index: 98;
+    animation: starburstAnim 1.2s ease-out forwards;
+  }
+  @keyframes starburstAnim {
+    0% { transform: scale(0); opacity: 1; box-shadow: 0 0 60px 30px var(--burst-color), 0 0 120px 60px var(--burst-color); }
+    100% { transform: scale(4); opacity: 0; box-shadow: 0 0 0 0 transparent; }
+  }
+
+  /* Winner banner */
+  .winner-banner {
+    position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0);
+    font-size: 3rem; font-weight: 800; letter-spacing: 0.1em;
+    text-transform: uppercase; pointer-events: none; z-index: 101;
+    animation: bannerPop 0.5s 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    text-shadow: 0 0 40px var(--banner-color), 0 4px 20px rgba(0,0,0,0.5);
+    white-space: nowrap;
+  }
+  @keyframes bannerPop {
+    0% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
+    100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+  }
+  @keyframes bannerFade {
+    0% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    100% { opacity: 0; transform: translate(-50%, -60%) scale(1.1); }
+  }
+
+  .controls { display: flex; gap: 12px; align-items: center; }
+
+  button {
+    padding: 10px 24px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.06);
+    color: #e0e0e0;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 0.02em;
+  }
+  button:hover {
+    background: rgba(255, 255, 255, 0.12);
+    border-color: rgba(255, 255, 255, 0.2);
+  }
+
+  .hint {
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.35);
+    text-align: center;
+    max-width: 380px;
+    line-height: 1.5;
+  }
+
+  .score {
+    display: flex; gap: 32px;
+    font-size: 0.95rem; font-weight: 500;
+  }
+  .score span { opacity: 0.6; }
+  .score .x-score { color: #6366f1; }
+  .score .o-score { color: #ec4899; }
+
+  /* Probability bar */
+  .prob-container {
+    width: min(92vw, 560px);
+    display: flex; flex-direction: column; gap: 6px;
+  }
+  .prob-labels {
+    display: flex; justify-content: space-between;
+    font-size: 0.8rem; font-weight: 600;
+  }
+  .prob-labels .x-prob { color: #6366f1; }
+  .prob-labels .draw-prob { color: rgba(255, 255, 255, 0.4); font-weight: 400; }
+  .prob-labels .o-prob { color: #ec4899; }
+  .prob-depth {
+    text-align: center;
+    font-size: 0.7rem;
+    color: rgba(255, 255, 255, 0.25);
+    margin-top: -2px;
+  }
+  .prob-bar {
+    width: 100%; height: 8px; border-radius: 4px;
+    overflow: hidden; display: flex;
+    background: rgba(255, 255, 255, 0.06);
+  }
+  .prob-bar .x-segment {
+    height: 100%; background: linear-gradient(90deg, #4f46e5, #6366f1);
+    transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 4px 0 0 4px;
+  }
+  .prob-bar .draw-segment {
+    height: 100%; background: rgba(255, 255, 255, 0.12);
+    transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .prob-bar .o-segment {
+    height: 100%; background: linear-gradient(90deg, #ec4899, #db2777);
+    transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 0 4px 4px 0;
+  }
+</style>
+</head>
+<body>
+
+<h1>Tic-Tac-Toe</h1>
+<div class="score">
+  <div class="x-score">X: <span id="xWins">0</span></div>
+  <div class="o-score">O: <span id="oWins">0</span></div>
+</div>
+<div class="status" id="status">
+  <span class="x">X</span>'s turn &mdash; place anywhere
+</div>
+<div class="prob-container">
+  <div class="prob-labels">
+    <span class="x-prob" id="xProb">X 50%</span>
+    <span class="draw-prob" id="drawProb">Draw 0%</span>
+    <span class="o-prob" id="oProb">O 50%</span>
+  </div>
+  <div class="prob-bar">
+    <div class="x-segment" id="xBar" style="width:50%"></div>
+    <div class="draw-segment" id="drawBar" style="width:0%"></div>
+    <div class="o-segment" id="oBar" style="width:50%"></div>
+  </div>
+  <div class="prob-depth" id="probDepth"></div>
+</div>
+<div class="board-wrapper">
+  <div class="board" id="board"></div>
+  <svg class="win-line-overlay" id="winLine" viewBox="0 0 100 100" preserveAspectRatio="none" style="display:none;"></svg>
+</div>
+<div class="controls">
+  <button id="resetBtn">New Game</button>
+  <button id="undoBtn">Undo</button>
+</div>
+<div class="hint">
+  Place marks anywhere on the 13&times;13 grid. Your moves define a 3&times;3 region &mdash; once formed, you're locked in.
+</div>
+
+<script>
+const SIZE = 13;
+const WIN_SIZE = 3;
+
+let grid = [];
+let currentPlayer = 'X';
+let moves = [];
+let gameOver = false;
+let scores = { X: 0, O: 0 };
+
+const boardEl = document.getElementById('board');
+const statusEl = document.getElementById('status');
+const resetBtn = document.getElementById('resetBtn');
+const undoBtn = document.getElementById('undoBtn');
+const winLineEl = document.getElementById('winLine');
+
+// ── Audio ──────────────────────────────────────────────
+const AudioCtx = window.AudioContext || window.webkitAudioContext;
+let audioCtx = null;
+function ensureAudio() {
+  if (!audioCtx) audioCtx = new AudioCtx();
+}
+
+function playPlaceSound(player) {
+  ensureAudio();
+  const ctx = audioCtx;
+  const now = ctx.currentTime;
+  const freq = player === 'X' ? 520 : 440;
+  const freq2 = player === 'X' ? 780 : 660;
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+  osc.type = 'sine';
+  osc.frequency.setValueAtTime(freq, now);
+  osc.frequency.exponentialRampToValueAtTime(freq2, now + 0.06);
+  osc.frequency.exponentialRampToValueAtTime(freq * 0.8, now + 0.15);
+  gain.gain.setValueAtTime(0.15, now);
+  gain.gain.exponentialRampToValueAtTime(0.001, now + 0.18);
+  osc.connect(gain).connect(ctx.destination);
+  osc.start(now);
+  osc.stop(now + 0.2);
+}
+
+function playVictoryMusic(player) {
+  ensureAudio();
+  const ctx = audioCtx;
+  const now = ctx.currentTime;
+
+  // Victory fanfare melody
+  const melody = player === 'X'
+    ? [ // Triumphant major fanfare
+      { f: 523, t: 0,    d: 0.15 },
+      { f: 523, t: 0.15, d: 0.15 },
+      { f: 523, t: 0.3,  d: 0.15 },
+      { f: 659, t: 0.5,  d: 0.3  },
+      { f: 523, t: 0.85, d: 0.15 },
+      { f: 659, t: 1.05, d: 0.15 },
+      { f: 784, t: 1.25, d: 0.6  },
+      { f: 784, t: 1.9,  d: 0.12 },
+      { f: 880, t: 2.05, d: 0.12 },
+      { f: 1047,t: 2.2,  d: 0.8  },
+    ]
+    : [ // Bright ascending fanfare
+      { f: 440, t: 0,    d: 0.15 },
+      { f: 440, t: 0.15, d: 0.15 },
+      { f: 440, t: 0.3,  d: 0.15 },
+      { f: 554, t: 0.5,  d: 0.3  },
+      { f: 440, t: 0.85, d: 0.15 },
+      { f: 554, t: 1.05, d: 0.15 },
+      { f: 659, t: 1.25, d: 0.6  },
+      { f: 659, t: 1.9,  d: 0.12 },
+      { f: 740, t: 2.05, d: 0.12 },
+      { f: 880, t: 2.2,  d: 0.8  },
+    ];
+
+  // Play melody
+  melody.forEach(({ f, t, d }) => {
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = 'square';
+    osc.frequency.setValueAtTime(f, now + t);
+    gain.gain.setValueAtTime(0, now + t);
+    gain.gain.linearRampToValueAtTime(0.08, now + t + 0.02);
+    gain.gain.setValueAtTime(0.08, now + t + d * 0.7);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + t + d);
+    osc.connect(gain).connect(ctx.destination);
+    osc.start(now + t);
+    osc.stop(now + t + d + 0.05);
+  });
+
+  // Harmony layer (softer sine)
+  const harmony = player === 'X'
+    ? [
+      { f: 392, t: 0.5,  d: 0.3 },
+      { f: 392, t: 1.25, d: 0.6 },
+      { f: 523, t: 2.2,  d: 0.8 },
+    ]
+    : [
+      { f: 330, t: 0.5,  d: 0.3 },
+      { f: 330, t: 1.25, d: 0.6 },
+      { f: 440, t: 2.2,  d: 0.8 },
+    ];
+
+  harmony.forEach(({ f, t, d }) => {
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(f, now + t);
+    gain.gain.setValueAtTime(0, now + t);
+    gain.gain.linearRampToValueAtTime(0.06, now + t + 0.02);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + t + d);
+    osc.connect(gain).connect(ctx.destination);
+    osc.start(now + t);
+    osc.stop(now + t + d + 0.05);
+  });
+
+  // Bass drum hits
+  [0, 0.5, 1.25, 2.2].forEach(t => {
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(100, now + t);
+    osc.frequency.exponentialRampToValueAtTime(40, now + t + 0.2);
+    gain.gain.setValueAtTime(0.2, now + t);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + t + 0.3);
+    osc.connect(gain).connect(ctx.destination);
+    osc.start(now + t);
+    osc.stop(now + t + 0.35);
+  });
+
+  // Cymbal shimmer
+  const bufferSize = ctx.sampleRate * 0.8;
+  const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+  const data = buffer.getChannelData(0);
+  for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
+  [0, 2.2].forEach(t => {
+    const noise = ctx.createBufferSource();
+    noise.buffer = buffer;
+    const bandpass = ctx.createBiquadFilter();
+    bandpass.type = 'bandpass';
+    bandpass.frequency.value = 8000;
+    bandpass.Q.value = 0.5;
+    const gain = ctx.createGain();
+    gain.gain.setValueAtTime(0.06, now + t);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + t + 0.6);
+    noise.connect(bandpass).connect(gain).connect(ctx.destination);
+    noise.start(now + t);
+    noise.stop(now + t + 0.7);
+  });
+}
+
+function playDrawSound() {
+  ensureAudio();
+  const ctx = audioCtx;
+  const now = ctx.currentTime;
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+  osc.type = 'triangle';
+  osc.frequency.setValueAtTime(300, now);
+  osc.frequency.linearRampToValueAtTime(200, now + 0.4);
+  gain.gain.setValueAtTime(0.12, now);
+  gain.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
+  osc.connect(gain).connect(ctx.destination);
+  osc.start(now);
+  osc.stop(now + 0.55);
+}
+
+// ── Celebration ────────────────────────────────────────
+function celebrate(player) {
+  const xColor = 'rgba(99, 102, 241, 0.6)';
+  const oColor = 'rgba(236, 72, 153, 0.6)';
+  const burstColor = player === 'X' ? xColor : oColor;
+  const bannerColor = player === 'X' ? '#6366f1' : '#ec4899';
+
+  // Screen flash
+  const flash = document.createElement('div');
+  flash.className = 'celebration-flash';
+  document.body.appendChild(flash);
+  setTimeout(() => flash.remove(), 900);
+
+  // Starburst ring
+  const burst = document.createElement('div');
+  burst.className = 'starburst';
+  burst.style.setProperty('--burst-color', burstColor);
+  document.body.appendChild(burst);
+  setTimeout(() => burst.remove(), 1300);
+
+  // Second delayed burst
+  setTimeout(() => {
+    const burst2 = document.createElement('div');
+    burst2.className = 'starburst';
+    burst2.style.setProperty('--burst-color', burstColor);
+    document.body.appendChild(burst2);
+    setTimeout(() => burst2.remove(), 1300);
+  }, 400);
+
+  // Winner banner
+  const banner = document.createElement('div');
+  banner.className = 'winner-banner';
+  banner.style.setProperty('--banner-color', bannerColor);
+  banner.style.color = bannerColor;
+  banner.textContent = `${player} Wins!`;
+  document.body.appendChild(banner);
+  setTimeout(() => {
+    banner.style.animation = 'bannerFade 1s ease-out forwards';
+    setTimeout(() => banner.remove(), 1000);
+  }, 2200);
+
+  // Confetti - multiple waves
+  for (let wave = 0; wave < 3; wave++) {
+    setTimeout(() => {
+      const container = document.createElement('div');
+      container.className = 'confetti-container';
+      document.body.appendChild(container);
+
+      const colors = player === 'X'
+        ? ['#6366f1', '#818cf8', '#a5b4fc', '#c7d2fe', '#a855f7', '#fbbf24']
+        : ['#ec4899', '#f472b6', '#f9a8d4', '#fbcfe8', '#a855f7', '#fbbf24'];
+
+      const count = wave === 0 ? 60 : 40;
+      for (let i = 0; i < count; i++) {
+        const confetti = document.createElement('div');
+        confetti.className = 'confetti';
+        const color = colors[Math.floor(Math.random() * colors.length)];
+        const left = Math.random() * 100;
+        const delay = Math.random() * 0.4;
+        const duration = 1.5 + Math.random() * 2;
+        const size = 4 + Math.random() * 10;
+        const shapes = ['50%', '2px', '0'];
+        const shape = shapes[Math.floor(Math.random() * shapes.length)];
+        confetti.style.cssText = `
+          left:${left}%; top:-10px;
+          width:${size}px; height:${size * (0.5 + Math.random())}px;
+          background:${color}; border-radius:${shape};
+          animation-delay:${delay}s; animation-duration:${duration}s;
+        `;
+        container.appendChild(confetti);
+      }
+      setTimeout(() => container.remove(), 4000);
+    }, wave * 600);
+  }
+
+  // Play victory music
+  playVictoryMusic(player);
+}
+
+// ── Win Probability (Minimax + full enumeration with memoization) ──
+// Looks forward through ALL remaining moves to the end of the game.
+// Uses memoization on the board state for speed.
+
+function boardStateKey(player) {
+  // Build a compact key from the grid contents in the relevant region
+  let minR = SIZE, maxR = -1, minC = SIZE, maxC = -1;
+  for (let r = 0; r < SIZE; r++)
+    for (let c = 0; c < SIZE; c++)
+      if (grid[r][c]) {
+        if (r < minR) minR = r;
+        if (r > maxR) maxR = r;
+        if (c < minC) minC = c;
+        if (c > maxC) maxC = c;
+      }
+  if (maxR === -1) return player + ':empty';
+
+  // The relevant region is the potential 5x5 area that could contain valid moves
+  const r0 = Math.max(0, minR - 2);
+  const r1 = Math.min(SIZE - 1, maxR + 2);
+  const c0 = Math.max(0, minC - 2);
+  const c1 = Math.min(SIZE - 1, maxC + 2);
+
+  let key = player + ':' + r0 + ',' + c0 + ',';
+  for (let r = r0; r <= r1; r++)
+    for (let c = c0; c <= c1; c++)
+      key += grid[r][c] || '.';
+  return key;
+}
+
+function gridHasWon(p) {
+  for (let r = 0; r < SIZE; r++)
+    for (let c = 0; c < SIZE; c++) {
+      if (grid[r][c] !== p) continue;
+      if (c + 2 < SIZE && grid[r][c+1] === p && grid[r][c+2] === p) return true;
+      if (r + 2 < SIZE && grid[r+1][c] === p && grid[r+2][c] === p) return true;
+      if (r + 2 < SIZE && c + 2 < SIZE && grid[r+1][c+1] === p && grid[r+2][c+2] === p) return true;
+      if (r + 2 < SIZE && c >= 2 && grid[r+1][c-1] === p && grid[r+2][c-2] === p) return true;
+    }
+  return false;
+}
+
+function getValidMovesFromGrid() {
+  let minR = SIZE, maxR = -1, minC = SIZE, maxC = -1;
+  let hasPieces = false;
+  for (let r = 0; r < SIZE; r++)
+    for (let c = 0; c < SIZE; c++)
+      if (grid[r][c]) {
+        hasPieces = true;
+        if (r < minR) minR = r;
+        if (r > maxR) maxR = r;
+        if (c < minC) minC = c;
+        if (c > maxC) maxC = c;
+      }
+  if (!hasPieces) return [];
+
+  const result = [];
+  // Only scan the area that could possibly be valid (within 2 of bounds)
+  const scanR0 = Math.max(0, minR - 2);
+  const scanR1 = Math.min(SIZE - 1, maxR + 2);
+  const scanC0 = Math.max(0, minC - 2);
+  const scanC1 = Math.min(SIZE - 1, maxC + 2);
+
+  for (let r = scanR0; r <= scanR1; r++)
+    for (let c = scanC0; c <= scanC1; c++) {
+      if (grid[r][c]) continue;
+      const nMinR = Math.min(minR, r), nMaxR = Math.max(maxR, r);
+      const nMinC = Math.min(minC, c), nMaxC = Math.max(maxC, c);
+      if (nMaxR - nMinR < WIN_SIZE && nMaxC - nMinC < WIN_SIZE)
+        result.push([r, c]);
+    }
+  return result;
+}
+
+function enumerateOutcomes(player, memo) {
+  const key = boardStateKey(player);
+  if (memo.has(key)) return memo.get(key);
+
+  // Check terminal states
+  if (gridHasWon('X')) { const r = { x: 1, o: 0, d: 0 }; memo.set(key, r); return r; }
+  if (gridHasWon('O')) { const r = { x: 0, o: 1, d: 0 }; memo.set(key, r); return r; }
+
+  const validMoves = getValidMovesFromGrid();
+  if (validMoves.length === 0) { const r = { x: 0, o: 0, d: 1 }; memo.set(key, r); return r; }
+
+  const totals = { x: 0, o: 0, d: 0 };
+  const next = player === 'X' ? 'O' : 'X';
+
+  for (const [r, c] of validMoves) {
+    grid[r][c] = player;
+    const sub = enumerateOutcomes(next, memo);
+    totals.x += sub.x;
+    totals.o += sub.o;
+    totals.d += sub.d;
+    grid[r][c] = null;
+  }
+
+  memo.set(key, totals);
+  return totals;
+}
+
+function computeProbabilities() {
+  if (moves.length === 0) return { x: 50, o: 50, draw: 0, depth: 0 };
+
+  const memo = new Map();
+  const result = enumerateOutcomes(currentPlayer, memo);
+  const total = result.x + result.o + result.d;
+  if (total === 0) return { x: 50, o: 50, draw: 0, depth: 0 };
+
+  // Calculate max remaining moves (depth of look-ahead)
+  const validNow = getValidMovesFromGrid();
+  const emptyCells = validNow.length;
+  // We look all the way to the end, but report how many moves ahead
+  const movesAhead = emptyCells; // we enumerate all remaining
+
+  return {
+    x: Math.round(result.x / total * 100),
+    o: Math.round(result.o / total * 100),
+    draw: Math.round(result.d / total * 100),
+    depth: movesAhead
+  };
+}
+
+function updateProbBar() {
+  if (gameOver) return;
+
+  let probs;
+  if (moves.length === 0) {
+    probs = { x: 50, o: 50, draw: 0, depth: 0 };
+  } else {
+    probs = computeProbabilities();
+  }
+
+  document.getElementById('xProb').textContent = `X ${probs.x}%`;
+  document.getElementById('drawProb').textContent = `Draw ${probs.draw}%`;
+  document.getElementById('oProb').textContent = `O ${probs.o}%`;
+  document.getElementById('xBar').style.width = probs.x + '%';
+  document.getElementById('drawBar').style.width = probs.draw + '%';
+  document.getElementById('oBar').style.width = probs.o + '%';
+
+  const depthEl = document.getElementById('probDepth');
+  if (probs.depth > 0) {
+    depthEl.textContent = `analyzing ${probs.depth} move${probs.depth !== 1 ? 's' : ''} ahead`;
+  } else {
+    depthEl.textContent = '';
+  }
+}
+
+function setProbResult(xPct, oPct, drawPct) {
+  document.getElementById('xProb').textContent = `X ${xPct}%`;
+  document.getElementById('oProb').textContent = `O ${oPct}%`;
+  document.getElementById('drawProb').textContent = `Draw ${drawPct}%`;
+  document.getElementById('xBar').style.width = xPct + '%';
+  document.getElementById('oBar').style.width = oPct + '%';
+  document.getElementById('drawBar').style.width = drawPct + '%';
+  document.getElementById('probDepth').textContent = '';
+}
+
+// ── Game Logic ─────────────────────────────────────────
+function init() {
+  grid = Array.from({ length: SIZE }, () => Array(SIZE).fill(null));
+  currentPlayer = 'X';
+  moves = [];
+  gameOver = false;
+  winLineEl.style.display = 'none';
+  winLineEl.innerHTML = '';
+  render();
+  updateStatus();
+  updateProbBar();
+}
+
+function getBounds() {
+  let minR = SIZE, maxR = -1, minC = SIZE, maxC = -1;
+  for (const m of moves) {
+    minR = Math.min(minR, m.row);
+    maxR = Math.max(maxR, m.row);
+    minC = Math.min(minC, m.col);
+    maxC = Math.max(maxC, m.col);
+  }
+  if (maxR === -1) return null;
+  return { minR, maxR, minC, maxC };
+}
+
+function isValid(row, col) {
+  if (grid[row][col] !== null || gameOver) return false;
+  if (moves.length === 0) return true;
+  const b = getBounds();
+  const newMinR = Math.min(b.minR, row);
+  const newMaxR = Math.max(b.maxR, row);
+  const newMinC = Math.min(b.minC, col);
+  const newMaxC = Math.max(b.maxC, col);
+  return (newMaxR - newMinR < WIN_SIZE) && (newMaxC - newMinC < WIN_SIZE);
+}
+
+function getValidCells() {
+  const valid = [];
+  for (let r = 0; r < SIZE; r++)
+    for (let c = 0; c < SIZE; c++)
+      if (isValid(r, c)) valid.push(`${r}-${c}`);
+  return new Set(valid);
+}
+
+function getRegionBoundary() {
+  const b = getBounds();
+  if (!b) return null;
+  const spanR = b.maxR - b.minR;
+  const spanC = b.maxC - b.minC;
+  let rStart, rEnd, cStart, cEnd;
+  if (spanR === 2) { rStart = b.minR; rEnd = b.maxR; }
+  else if (spanR === 1) { rStart = Math.max(0, b.maxR - 2); rEnd = Math.min(SIZE - 1, b.minR + 2); }
+  else { rStart = Math.max(0, b.minR - 2); rEnd = Math.min(SIZE - 1, b.minR + 2); }
+  if (spanC === 2) { cStart = b.minC; cEnd = b.maxC; }
+  else if (spanC === 1) { cStart = Math.max(0, b.maxC - 2); cEnd = Math.min(SIZE - 1, b.minC + 2); }
+  else { cStart = Math.max(0, b.minC - 2); cEnd = Math.min(SIZE - 1, b.minC + 2); }
+  return { rStart, rEnd, cStart, cEnd };
+}
+
+function checkWin(player) {
+  const placed = moves.filter(m => m.player === player);
+  if (placed.length < 3) return null;
+  const set = new Set(placed.map(m => `${m.row}-${m.col}`));
+  const dirs = [[0,1],[1,0],[1,1],[1,-1]];
+  for (const m of placed) {
+    for (const [dr, dc] of dirs) {
+      const line = [];
+      for (let i = 0; i < 3; i++) {
+        const key = `${m.row + dr*i}-${m.col + dc*i}`;
+        if (set.has(key)) line.push(key);
+      }
+      if (line.length === 3) return line;
+    }
+  }
+  return null;
+}
+
+function drawWinLine(winCells, player) {
+  const coords = winCells.map(key => {
+    const [r, c] = key.split('-').map(Number);
+    return { x: (c + 0.5) / SIZE * 100, y: (r + 0.5) / SIZE * 100 };
+  });
+  coords.sort((a, b) => a.x - b.x || a.y - b.y);
+  const start = coords[0], end = coords[coords.length - 1];
+  const dx = end.x - start.x, dy = end.y - start.y;
+  const len = Math.sqrt(dx * dx + dy * dy);
+  const extend = 2.5;
+  const ex = (dx / len) * extend, ey = (dy / len) * extend;
+  const color = player === 'X' ? 'rgba(99, 102, 241, 0.9)' : 'rgba(236, 72, 153, 0.9)';
+
+  winLineEl.style.display = 'block';
+  winLineEl.style.setProperty('--line-color', color);
+  winLineEl.innerHTML = `
+    <line x1="${start.x - ex}" y1="${start.y - ey}" x2="${end.x + ex}" y2="${end.y + ey}"
+      stroke="${color}" stroke-dasharray="1000" stroke-dashoffset="1000"
+      style="animation: lineGrow 0.4s 0.15s ease-out forwards;" />
+  `;
+}
+
+function placeMove(row, col) {
+  if (!isValid(row, col)) return;
+  playPlaceSound(currentPlayer);
+  grid[row][col] = currentPlayer;
+  moves.push({ row, col, player: currentPlayer });
+
+  const winLine = checkWin(currentPlayer);
+  if (winLine) {
+    gameOver = true;
+    scores[currentPlayer]++;
+    document.getElementById('xWins').textContent = scores.X;
+    document.getElementById('oWins').textContent = scores.O;
+    render(new Set(winLine));
+    drawWinLine(winLine, currentPlayer);
+    statusEl.innerHTML = `<span class="winner">${currentPlayer} wins!</span>`;
+    setProbResult(currentPlayer === 'X' ? 100 : 0, currentPlayer === 'O' ? 100 : 0, 0);
+    setTimeout(() => celebrate(currentPlayer), 150);
+    return;
+  }
+
+  currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+  const validCells = getValidCells();
+  if (validCells.size === 0 && !gameOver) {
+    gameOver = true;
+    render();
+    statusEl.innerHTML = `It's a draw!`;
+    setProbResult(0, 0, 100);
+    playDrawSound();
+    return;
+  }
+
+  render();
+  updateStatus();
+  updateProbBar();
+}
+
+function updateStatus() {
+  const b = getBounds();
+  const cls = currentPlayer === 'X' ? 'x' : 'o';
+  let extra = '';
+  if (moves.length === 0) extra = ' &mdash; place anywhere';
+  else if (b) {
+    const spanR = b.maxR - b.minR;
+    const spanC = b.maxC - b.minC;
+    if (spanR === 2 && spanC === 2) extra = ' &mdash; grid locked';
+    else extra = ' &mdash; grid forming';
+  }
+  statusEl.innerHTML = `<span class="${cls}">${currentPlayer}</span>'s turn${extra}`;
+}
+
+function undo() {
+  if (moves.length === 0 || gameOver) return;
+  const last = moves.pop();
+  grid[last.row][last.col] = null;
+  currentPlayer = last.player;
+  winLineEl.style.display = 'none';
+  winLineEl.innerHTML = '';
+  render();
+  updateStatus();
+  updateProbBar();
+}
+
+function render(winCells = null) {
+  const validCells = getValidCells();
+  const bounds = getBounds();
+  const region = getRegionBoundary();
+
+  boardEl.innerHTML = '';
+  for (let r = 0; r < SIZE; r++) {
+    for (let c = 0; c < SIZE; c++) {
+      const cell = document.createElement('div');
+      cell.className = 'cell';
+      const key = `${r}-${c}`;
+
+      if (grid[r][c]) {
+        cell.classList.add('taken');
+        const mark = document.createElement('span');
+        mark.className = `mark ${grid[r][c].toLowerCase()}`;
+        mark.textContent = grid[r][c];
+        cell.appendChild(mark);
+      }
+
+      if (validCells.has(key) && !gameOver) cell.classList.add('valid');
+      else if (!grid[r][c] && !gameOver) cell.classList.add('locked');
+
+      if (winCells && winCells.has(key)) cell.classList.add('win-cell');
+
+      if (region && moves.length > 0) {
+        const inRegion = r >= region.rStart && r <= region.rEnd && c >= region.cStart && c <= region.cEnd;
+        if (bounds && (bounds.maxR - bounds.minR >= 1 || bounds.maxC - bounds.minC >= 1)) {
+          if (inRegion) {
+            if (r === region.rStart) cell.classList.add('boundary-top');
+            if (r === region.rEnd) cell.classList.add('boundary-bottom');
+            if (c === region.cStart) cell.classList.add('boundary-left');
+            if (c === region.cEnd) cell.classList.add('boundary-right');
+          }
+        }
+      }
+
+      cell.addEventListener('click', () => placeMove(r, c));
+      boardEl.appendChild(cell);
+    }
+  }
+}
+
+resetBtn.addEventListener('click', init);
+undoBtn.addEventListener('click', undo);
+init();
+</script>
+</body>
+</html>
