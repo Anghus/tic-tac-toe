@@ -18,185 +18,145 @@
     align-items: center;
     justify-content: center;
     gap: 20px;
-    overflow: hidden;
+    overflow-x: hidden;
   }
 
   h1 {
-    font-size: 1.6rem;
-    font-weight: 600;
-    letter-spacing: 0.05em;
+    font-size: 1.6rem; font-weight: 600; letter-spacing: 0.05em;
     text-transform: uppercase;
     background: linear-gradient(135deg, #6366f1, #a855f7, #ec4899);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
   }
 
   /* ── Lobby ────────────────────────────────────────── */
   .lobby {
     display: flex; flex-direction: column; align-items: center; gap: 20px;
     padding: 40px; border-radius: 16px;
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.06);
-    min-width: 320px;
+    background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);
+    min-width: 340px; max-width: 400px;
   }
-  .lobby h2 {
-    font-size: 1rem; font-weight: 500; color: rgba(255,255,255,0.6);
-  }
-  .lobby-buttons {
-    display: flex; flex-direction: column; gap: 12px; width: 100%;
-  }
-  .lobby-buttons button {
-    width: 100%; padding: 14px; font-size: 1rem;
-  }
-  .btn-primary {
-    background: linear-gradient(135deg, rgba(99,102,241,0.2), rgba(168,85,247,0.2)) !important;
-    border-color: rgba(99,102,241,0.4) !important;
-  }
-  .btn-primary:hover {
-    background: linear-gradient(135deg, rgba(99,102,241,0.3), rgba(168,85,247,0.3)) !important;
-  }
-  .btn-pink {
-    background: linear-gradient(135deg, rgba(236,72,153,0.2), rgba(168,85,247,0.2)) !important;
-    border-color: rgba(236,72,153,0.4) !important;
-  }
-  .btn-pink:hover {
-    background: linear-gradient(135deg, rgba(236,72,153,0.3), rgba(168,85,247,0.3)) !important;
-  }
-  .join-section {
-    display: flex; gap: 8px; width: 100%;
-  }
+  .lobby h2 { font-size: 1rem; font-weight: 500; color: rgba(255,255,255,0.6); }
+  .lobby-buttons { display: flex; flex-direction: column; gap: 12px; width: 100%; }
+  .lobby-buttons button { width: 100%; padding: 14px; font-size: 1rem; }
+  .btn-primary { background: linear-gradient(135deg, rgba(99,102,241,0.2), rgba(168,85,247,0.2)) !important; border-color: rgba(99,102,241,0.4) !important; }
+  .btn-primary:hover { background: linear-gradient(135deg, rgba(99,102,241,0.3), rgba(168,85,247,0.3)) !important; }
+  .btn-pink { background: linear-gradient(135deg, rgba(236,72,153,0.2), rgba(168,85,247,0.2)) !important; border-color: rgba(236,72,153,0.4) !important; }
+  .btn-pink:hover { background: linear-gradient(135deg, rgba(236,72,153,0.3), rgba(168,85,247,0.3)) !important; }
+  .join-section { display: flex; gap: 8px; width: 100%; }
   .join-section input {
     flex: 1; padding: 12px 14px; border-radius: 8px;
-    border: 1px solid rgba(255,255,255,0.12);
-    background: rgba(255,255,255,0.06); color: #e0e0e0;
-    font-size: 0.95rem; font-family: inherit;
-    outline: none;
+    border: 1px solid rgba(255,255,255,0.12); background: rgba(255,255,255,0.06);
+    color: #e0e0e0; font-size: 0.95rem; font-family: inherit; outline: none;
   }
-  .join-section input:focus {
-    border-color: rgba(236,72,153,0.5);
-  }
+  .join-section input:focus { border-color: rgba(236,72,153,0.5); }
   .join-section input::placeholder { color: rgba(255,255,255,0.25); }
   .join-section button { white-space: nowrap; }
-
   .game-code {
-    font-family: 'SF Mono', 'Fira Code', monospace;
-    font-size: 1.8rem; font-weight: 700; letter-spacing: 0.15em;
-    background: linear-gradient(135deg, #6366f1, #a855f7);
+    font-family: 'SF Mono','Fira Code',monospace; font-size: 1.8rem; font-weight: 700;
+    letter-spacing: 0.15em; background: linear-gradient(135deg, #6366f1, #a855f7);
     -webkit-background-clip: text; -webkit-text-fill-color: transparent;
     user-select: all; cursor: pointer;
   }
-  .lobby-status {
-    font-size: 0.85rem; color: rgba(255,255,255,0.4);
-    text-align: center; line-height: 1.5;
-  }
+  .lobby-status { font-size: 0.85rem; color: rgba(255,255,255,0.4); text-align: center; line-height: 1.5; }
   .lobby-status.error { color: #f87171; }
-  .copy-hint {
-    font-size: 0.75rem; color: rgba(255,255,255,0.25);
-  }
-  .lobby .back-link {
-    font-size: 0.8rem; color: rgba(255,255,255,0.3);
-    cursor: pointer; text-decoration: underline;
-    background: none; border: none; padding: 0;
-  }
+  .copy-hint { font-size: 0.75rem; color: rgba(255,255,255,0.25); }
+  .lobby .back-link { font-size: 0.8rem; color: rgba(255,255,255,0.3); cursor: pointer; text-decoration: underline; background: none; border: none; padding: 0; }
   .lobby .back-link:hover { color: rgba(255,255,255,0.5); }
+
+  /* Rules toggles */
+  .rules-section { width: 100%; }
+  .rules-section h3 { font-size: 0.8rem; font-weight: 500; color: rgba(255,255,255,0.4); margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.08em; }
+  .rule-toggle {
+    display: flex; align-items: flex-start; gap: 10px; padding: 8px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04); cursor: pointer;
+  }
+  .rule-toggle:last-child { border-bottom: none; }
+  .rule-toggle input[type="checkbox"] { display: none; }
+  .rule-check {
+    width: 18px; height: 18px; border-radius: 4px; flex-shrink: 0; margin-top: 1px;
+    border: 1.5px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.04);
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s; font-size: 11px; color: transparent;
+  }
+  .rule-toggle input:checked + .rule-check {
+    border-color: rgba(168,85,247,0.6); background: rgba(168,85,247,0.2); color: #c084fc;
+  }
+  .rule-info { flex: 1; }
+  .rule-name { font-size: 0.85rem; font-weight: 500; color: rgba(255,255,255,0.8); }
+  .rule-desc { font-size: 0.72rem; color: rgba(255,255,255,0.3); margin-top: 2px; line-height: 1.4; }
 
   .hidden { display: none !important; }
 
   /* ── Game UI ──────────────────────────────────────── */
-  .game-container {
-    display: flex; flex-direction: column; align-items: center; gap: 20px;
-  }
-
-  .status {
-    font-size: 1.1rem; font-weight: 500; min-height: 1.4em;
-    transition: all 0.3s; text-align: center;
-  }
+  .game-container { display: flex; flex-direction: column; align-items: center; gap: 20px; }
+  .status { font-size: 1.1rem; font-weight: 500; min-height: 1.4em; transition: all 0.3s; text-align: center; }
   .status .x { color: #6366f1; }
   .status .o { color: #ec4899; }
-  .status .winner {
-    background: linear-gradient(135deg, #6366f1, #ec4899);
-    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-    font-weight: 700; font-size: 1.3rem;
-  }
-  .status .you-tag {
-    font-size: 0.75rem; opacity: 0.5; font-weight: 400;
-  }
-
-  .connection-bar {
-    font-size: 0.75rem; color: rgba(255,255,255,0.3);
-    display: flex; align-items: center; gap: 6px;
-  }
-  .connection-dot {
-    width: 6px; height: 6px; border-radius: 50%;
-    background: #22c55e; display: inline-block;
-  }
+  .status .winner { background: linear-gradient(135deg, #6366f1, #ec4899); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 700; font-size: 1.3rem; }
+  .status .you-tag { font-size: 0.75rem; opacity: 0.5; font-weight: 400; }
+  .connection-bar { font-size: 0.75rem; color: rgba(255,255,255,0.3); display: flex; align-items: center; gap: 6px; }
+  .connection-dot { width: 6px; height: 6px; border-radius: 50%; background: #22c55e; display: inline-block; }
   .connection-dot.disconnected { background: #ef4444; }
 
-  .board-wrapper {
-    position: relative;
-    width: min(92vw, 560px);
-    aspect-ratio: 1;
+  /* Swap / Power move prompt */
+  .action-prompt {
+    display: flex; gap: 10px; align-items: center; justify-content: center;
+    padding: 10px 16px; border-radius: 10px;
+    background: rgba(168,85,247,0.1); border: 1px solid rgba(168,85,247,0.25);
+    animation: promptFadeIn 0.3s ease;
   }
+  .action-prompt button { padding: 8px 18px; font-size: 0.85rem; }
+  .action-prompt .prompt-text { font-size: 0.85rem; color: rgba(255,255,255,0.6); }
+  @keyframes promptFadeIn { 0% { opacity: 0; transform: translateY(-6px); } 100% { opacity: 1; transform: translateY(0); } }
 
+  /* Active rules badges */
+  .active-rules { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; }
+  .rule-badge {
+    font-size: 0.65rem; padding: 3px 8px; border-radius: 4px;
+    background: rgba(168,85,247,0.12); border: 1px solid rgba(168,85,247,0.2);
+    color: rgba(255,255,255,0.45); text-transform: uppercase; letter-spacing: 0.05em;
+  }
+  .rule-badge.used { opacity: 0.3; text-decoration: line-through; }
+
+  .board-wrapper { position: relative; width: min(92vw, 560px); aspect-ratio: 1; }
   .board {
-    display: grid;
-    grid-template-columns: repeat(13, 1fr);
-    gap: 2px; padding: 10px;
-    background: rgba(255, 255, 255, 0.03);
-    border-radius: 16px;
-    border: 1px solid rgba(255, 255, 255, 0.06);
-    backdrop-filter: blur(10px);
+    display: grid; grid-template-columns: repeat(13, 1fr); gap: 2px; padding: 10px;
+    background: rgba(255,255,255,0.03); border-radius: 16px;
+    border: 1px solid rgba(255,255,255,0.06); backdrop-filter: blur(10px);
     width: 100%; height: 100%;
   }
-
-  .win-line-overlay {
-    position: absolute;
-    top: 10px; left: 10px; right: 10px; bottom: 10px;
-    pointer-events: none; z-index: 10;
-  }
-  .win-line-overlay line {
-    stroke-linecap: round; stroke-width: 1.2;
-    filter: drop-shadow(0 0 6px var(--line-color)) drop-shadow(0 0 14px var(--line-color));
-  }
+  .win-line-overlay { position: absolute; top: 10px; left: 10px; right: 10px; bottom: 10px; pointer-events: none; z-index: 10; }
+  .win-line-overlay line { stroke-linecap: round; stroke-width: 1.2; filter: drop-shadow(0 0 6px var(--line-color)) drop-shadow(0 0 14px var(--line-color)); }
 
   .cell {
-    aspect-ratio: 1;
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    border-radius: 4px;
+    aspect-ratio: 1; border: 1px solid rgba(255,255,255,0.05); border-radius: 4px;
     display: flex; align-items: center; justify-content: center;
-    font-size: clamp(10px, 2.8vw, 18px);
-    font-weight: 700; cursor: pointer;
-    transition: all 0.2s ease;
-    background: rgba(255, 255, 255, 0.02);
-    position: relative;
+    font-size: clamp(10px, 2.8vw, 18px); font-weight: 700; cursor: pointer;
+    transition: all 0.2s ease; background: rgba(255,255,255,0.02); position: relative;
   }
-  .cell:hover:not(.taken):not(.locked):not(.not-my-turn) {
-    background: rgba(255, 255, 255, 0.08);
-    border-color: rgba(255, 255, 255, 0.15);
-    transform: scale(1.08);
-  }
-  .cell.valid { background: rgba(255, 255, 255, 0.04); border-color: rgba(255, 255, 255, 0.1); }
-  .cell.valid:hover:not(.taken):not(.not-my-turn) {
-    background: rgba(255, 255, 255, 0.1);
-    border-color: rgba(163, 130, 255, 0.4);
-    box-shadow: 0 0 12px rgba(163, 130, 255, 0.15);
-  }
+  .cell:hover:not(.taken):not(.locked):not(.not-my-turn) { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.15); transform: scale(1.08); }
+  .cell.valid { background: rgba(255,255,255,0.04); border-color: rgba(255,255,255,0.1); }
+  .cell.valid:hover:not(.taken):not(.not-my-turn) { background: rgba(255,255,255,0.1); border-color: rgba(163,130,255,0.4); box-shadow: 0 0 12px rgba(163,130,255,0.15); }
   .cell.locked { opacity: 0.2; cursor: default; border-color: transparent; }
   .cell.taken { cursor: default; }
   .cell.not-my-turn { cursor: default; }
+  .cell.wall { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.15); }
+  .cell.erase-target { cursor: pointer; }
+  .cell.erase-target:hover { background: rgba(239,68,68,0.15); border-color: rgba(239,68,68,0.4); box-shadow: 0 0 12px rgba(239,68,68,0.2); }
 
   .cell .mark { animation: popIn 0.25s cubic-bezier(0.34, 1.56, 0.64, 1); }
-  .cell .mark.x { color: #6366f1; text-shadow: 0 0 12px rgba(99, 102, 241, 0.4); }
-  .cell .mark.o { color: #ec4899; text-shadow: 0 0 12px rgba(236, 72, 153, 0.4); }
+  .cell .mark.x { color: #6366f1; text-shadow: 0 0 12px rgba(99,102,241,0.4); }
+  .cell .mark.o { color: #ec4899; text-shadow: 0 0 12px rgba(236,72,153,0.4); }
+  .cell .mark.wall-mark { color: rgba(255,255,255,0.25); text-shadow: none; }
 
-  .cell.win-cell { animation: winPulse 0.6s ease; background: rgba(255, 255, 255, 0.1); z-index: 5; }
-  .cell.win-cell .mark.x { text-shadow: 0 0 24px rgba(99, 102, 241, 0.9); }
-  .cell.win-cell .mark.o { text-shadow: 0 0 24px rgba(236, 72, 153, 0.9); }
+  .cell.win-cell { animation: winPulse 0.6s ease; background: rgba(255,255,255,0.1); z-index: 5; }
+  .cell.win-cell .mark.x { text-shadow: 0 0 24px rgba(99,102,241,0.9); }
+  .cell.win-cell .mark.o { text-shadow: 0 0 24px rgba(236,72,153,0.9); }
 
-  .cell.boundary-top { border-top: 2px solid rgba(163, 130, 255, 0.25); }
-  .cell.boundary-bottom { border-bottom: 2px solid rgba(163, 130, 255, 0.25); }
-  .cell.boundary-left { border-left: 2px solid rgba(163, 130, 255, 0.25); }
-  .cell.boundary-right { border-right: 2px solid rgba(163, 130, 255, 0.25); }
+  .cell.boundary-top { border-top: 2px solid rgba(163,130,255,0.25); }
+  .cell.boundary-bottom { border-bottom: 2px solid rgba(163,130,255,0.25); }
+  .cell.boundary-left { border-left: 2px solid rgba(163,130,255,0.25); }
+  .cell.boundary-right { border-right: 2px solid rgba(163,130,255,0.25); }
 
   @keyframes popIn { 0% { transform: scale(0); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
   @keyframes winPulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.15); } }
@@ -206,25 +166,19 @@
   .confetti { position: absolute; opacity: 0; animation: confettiFall linear forwards; }
   @keyframes confettiFall { 0% { opacity: 1; transform: translateY(0) rotate(0deg) scale(1); } 80% { opacity: 1; } 100% { opacity: 0; transform: translateY(100vh) rotate(720deg) scale(0.5); } }
   .celebration-flash { position: fixed; inset: 0; pointer-events: none; z-index: 99; animation: flash 0.8s ease-out forwards; }
-  @keyframes flash { 0% { background: rgba(255, 255, 255, 0.25); } 100% { background: transparent; } }
-
+  @keyframes flash { 0% { background: rgba(255,255,255,0.25); } 100% { background: transparent; } }
   .starburst { position: fixed; top: 50%; left: 50%; width: 300px; height: 300px; margin: -150px 0 0 -150px; border-radius: 50%; pointer-events: none; z-index: 98; animation: starburstAnim 1.2s ease-out forwards; }
   @keyframes starburstAnim { 0% { transform: scale(0); opacity: 1; box-shadow: 0 0 60px 30px var(--burst-color), 0 0 120px 60px var(--burst-color); } 100% { transform: scale(4); opacity: 0; box-shadow: 0 0 0 0 transparent; } }
+  .winner-banner { position: fixed; top: 50%; left: 50%; transform: translate(-50%,-50%) scale(0); font-size: 3rem; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; pointer-events: none; z-index: 101; animation: bannerPop 0.5s 0.3s cubic-bezier(0.34,1.56,0.64,1) forwards; text-shadow: 0 0 40px var(--banner-color), 0 4px 20px rgba(0,0,0,0.5); white-space: nowrap; }
+  @keyframes bannerPop { 0% { transform: translate(-50%,-50%) scale(0); opacity: 0; } 100% { transform: translate(-50%,-50%) scale(1); opacity: 1; } }
+  @keyframes bannerFade { 0% { opacity: 1; transform: translate(-50%,-50%) scale(1); } 100% { opacity: 0; transform: translate(-50%,-60%) scale(1.1); } }
 
-  .winner-banner { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0); font-size: 3rem; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; pointer-events: none; z-index: 101; animation: bannerPop 0.5s 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; text-shadow: 0 0 40px var(--banner-color), 0 4px 20px rgba(0,0,0,0.5); white-space: nowrap; }
-  @keyframes bannerPop { 0% { transform: translate(-50%, -50%) scale(0); opacity: 0; } 100% { transform: translate(-50%, -50%) scale(1); opacity: 1; } }
-  @keyframes bannerFade { 0% { opacity: 1; transform: translate(-50%, -50%) scale(1); } 100% { opacity: 0; transform: translate(-50%, -60%) scale(1.1); } }
+  .controls { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; justify-content: center; }
+  button { padding: 10px 24px; border: 1px solid rgba(255,255,255,0.12); border-radius: 8px; background: rgba(255,255,255,0.06); color: #e0e0e0; font-size: 0.9rem; font-weight: 500; cursor: pointer; transition: all 0.2s; letter-spacing: 0.02em; }
+  button:hover { background: rgba(255,255,255,0.12); border-color: rgba(255,255,255,0.2); }
+  button:disabled { opacity: 0.3; cursor: default; }
 
-  .controls { display: flex; gap: 12px; align-items: center; }
-  button {
-    padding: 10px 24px; border: 1px solid rgba(255, 255, 255, 0.12);
-    border-radius: 8px; background: rgba(255, 255, 255, 0.06);
-    color: #e0e0e0; font-size: 0.9rem; font-weight: 500;
-    cursor: pointer; transition: all 0.2s; letter-spacing: 0.02em;
-  }
-  button:hover { background: rgba(255, 255, 255, 0.12); border-color: rgba(255, 255, 255, 0.2); }
-
-  .hint { font-size: 0.8rem; color: rgba(255, 255, 255, 0.35); text-align: center; max-width: 380px; line-height: 1.5; }
+  .hint { font-size: 0.8rem; color: rgba(255,255,255,0.35); text-align: center; max-width: 420px; line-height: 1.5; }
   .score { display: flex; gap: 32px; font-size: 0.95rem; font-weight: 500; }
   .score span { opacity: 0.6; }
   .score .x-score { color: #6366f1; }
@@ -233,13 +187,13 @@
   .prob-container { width: min(92vw, 560px); display: flex; flex-direction: column; gap: 6px; }
   .prob-labels { display: flex; justify-content: space-between; font-size: 0.8rem; font-weight: 600; }
   .prob-labels .x-prob { color: #6366f1; }
-  .prob-labels .draw-prob { color: rgba(255, 255, 255, 0.4); font-weight: 400; }
+  .prob-labels .draw-prob { color: rgba(255,255,255,0.4); font-weight: 400; }
   .prob-labels .o-prob { color: #ec4899; }
-  .prob-depth { text-align: center; font-size: 0.7rem; color: rgba(255, 255, 255, 0.25); margin-top: -2px; }
-  .prob-bar { width: 100%; height: 8px; border-radius: 4px; overflow: hidden; display: flex; background: rgba(255, 255, 255, 0.06); }
-  .prob-bar .x-segment { height: 100%; background: linear-gradient(90deg, #4f46e5, #6366f1); transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1); border-radius: 4px 0 0 4px; }
-  .prob-bar .draw-segment { height: 100%; background: rgba(255, 255, 255, 0.12); transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
-  .prob-bar .o-segment { height: 100%; background: linear-gradient(90deg, #ec4899, #db2777); transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1); border-radius: 0 4px 4px 0; }
+  .prob-depth { text-align: center; font-size: 0.7rem; color: rgba(255,255,255,0.25); margin-top: -2px; }
+  .prob-bar { width: 100%; height: 8px; border-radius: 4px; overflow: hidden; display: flex; background: rgba(255,255,255,0.06); }
+  .prob-bar .x-segment { height: 100%; background: linear-gradient(90deg, #4f46e5, #6366f1); transition: width 0.4s cubic-bezier(0.4,0,0.2,1); border-radius: 4px 0 0 4px; }
+  .prob-bar .draw-segment { height: 100%; background: rgba(255,255,255,0.12); transition: width 0.4s cubic-bezier(0.4,0,0.2,1); }
+  .prob-bar .o-segment { height: 100%; background: linear-gradient(90deg, #ec4899, #db2777); transition: width 0.4s cubic-bezier(0.4,0,0.2,1); border-radius: 0 4px 4px 0; }
 
   @keyframes pulse { 0%, 100% { opacity: 0.4; } 50% { opacity: 1; } }
   .waiting { animation: pulse 1.5s ease-in-out infinite; }
@@ -253,11 +207,63 @@
 <div class="lobby" id="lobby">
   <h2>Choose a game mode</h2>
 
-  <!-- Main menu -->
   <div class="lobby-buttons" id="lobbyMenu">
     <button class="btn-primary" id="createBtn">Create Online Game</button>
     <button class="btn-pink" id="joinBtn">Join Online Game</button>
     <button id="localBtn">Local Play</button>
+  </div>
+
+  <!-- Rules selection (shown before create/local) -->
+  <div class="hidden" id="rulesView">
+    <div style="display:flex;flex-direction:column;align-items:center;gap:16px;width:320px;">
+      <div class="rules-section">
+        <h3>House Rules</h3>
+        <label class="rule-toggle">
+          <input type="checkbox" id="ruleSwap">
+          <span class="rule-check">&#10003;</span>
+          <div class="rule-info">
+            <div class="rule-name">Swap Rule</div>
+            <div class="rule-desc">After the first move, the other player can steal that position instead of playing normally.</div>
+          </div>
+        </label>
+        <label class="rule-toggle">
+          <input type="checkbox" id="rulePower">
+          <span class="rule-check">&#10003;</span>
+          <div class="rule-info">
+            <div class="rule-name">Power Move</div>
+            <div class="rule-desc">The second player gets a one-time ability: erase an opponent's mark, place two marks, or place a wall.</div>
+          </div>
+        </label>
+        <label class="rule-toggle">
+          <input type="checkbox" id="ruleKomi">
+          <span class="rule-check">&#10003;</span>
+          <div class="rule-info">
+            <div class="rule-name">Komi (Draw Advantage)</div>
+            <div class="rule-desc">Draws count as a win for the second player, offsetting first-move advantage.</div>
+          </div>
+        </label>
+        <label class="rule-toggle">
+          <input type="checkbox" id="ruleShrink">
+          <span class="rule-check">&#10003;</span>
+          <div class="rule-info">
+            <div class="rule-name">Shrinking Grid</div>
+            <div class="rule-desc">First player's grid locks to 3&times;3 after 2 moves, while second player keeps full flexibility.</div>
+          </div>
+        </label>
+        <label class="rule-toggle">
+          <input type="checkbox" id="ruleBid">
+          <span class="rule-check">&#10003;</span>
+          <div class="rule-info">
+            <div class="rule-name">Bid for First Move</div>
+            <div class="rule-desc">Both players secretly pick a cell. Same cell? Second player gets it. Different? Both are placed.</div>
+          </div>
+        </label>
+      </div>
+      <div style="display:flex;gap:10px;width:100%;">
+        <button class="back-link" id="rulesBack" style="flex:1;">Back</button>
+        <button class="btn-primary" id="rulesConfirm" style="flex:2;">Start</button>
+      </div>
+    </div>
   </div>
 
   <!-- Create: waiting for opponent -->
@@ -295,7 +301,9 @@
     <div class="x-score">X: <span id="xWins">0</span></div>
     <div class="o-score">O: <span id="oWins">0</span></div>
   </div>
+  <div class="active-rules" id="activeRules"></div>
   <div class="status" id="status"></div>
+  <div id="actionPrompt"></div>
   <div class="prob-container">
     <div class="prob-labels">
       <span class="x-prob" id="xProb">X 50%</span>
@@ -318,7 +326,7 @@
     <button id="undoBtn">Undo</button>
     <button id="leaveBtn" class="hidden">Leave</button>
   </div>
-  <div class="hint">
+  <div class="hint" id="hintText">
     Place marks anywhere on the 13&times;13 grid. Your moves define a 3&times;3 region &mdash; once formed, you're locked in.
   </div>
 </div>
@@ -333,53 +341,53 @@ let moves = [];
 let gameOver = false;
 let scores = { X: 0, O: 0 };
 
+// Rule state
+let rules = { swap: false, power: false, komi: false, shrink: false, bid: false };
+let firstPlayer = 'X';
+let secondPlayer = 'O';
+let swapPhase = false;
+let powerAvailable = false;
+let powerMode = null;
+let doubleMovePending = false;
+let bidPhase = false;        // waiting for bid selections
+let bidSelection = null;     // this player's bid {row, col}
+let remoteBid = null;        // opponent's bid (online)
+
 // Multiplayer state
-let gameMode = 'local'; // 'local', 'online'
-let myRole = null;      // 'X' or 'O' (null in local)
+let gameMode = 'local';
+let myRole = null;
 let peer = null;
 let conn = null;
+let pendingMode = null; // 'create' or 'local' — set before rules screen
 
 const boardEl = document.getElementById('board');
 const statusEl = document.getElementById('status');
 const resetBtn = document.getElementById('resetBtn');
 const undoBtn = document.getElementById('undoBtn');
 const winLineEl = document.getElementById('winLine');
+const actionPromptEl = document.getElementById('actionPrompt');
 
 // ── Audio ──────────────────────────────────────────────
 const AudioCtx = window.AudioContext || window.webkitAudioContext;
 let audioCtx = null;
-function ensureAudio() {
-  if (!audioCtx) audioCtx = new AudioCtx();
-}
+function ensureAudio() { if (!audioCtx) audioCtx = new AudioCtx(); }
 
 function playPlaceSound(player) {
-  ensureAudio();
-  const ctx = audioCtx;
-  const now = ctx.currentTime;
-  const freq = player === 'X' ? 520 : 440;
-  const freq2 = player === 'X' ? 780 : 660;
-  const osc = ctx.createOscillator();
-  const gain = ctx.createGain();
-  osc.type = 'sine';
-  osc.frequency.setValueAtTime(freq, now);
-  osc.frequency.exponentialRampToValueAtTime(freq2, now + 0.06);
-  osc.frequency.exponentialRampToValueAtTime(freq * 0.8, now + 0.15);
-  gain.gain.setValueAtTime(0.15, now);
-  gain.gain.exponentialRampToValueAtTime(0.001, now + 0.18);
-  osc.connect(gain).connect(ctx.destination);
-  osc.start(now);
-  osc.stop(now + 0.2);
+  ensureAudio(); const ctx=audioCtx, now=ctx.currentTime;
+  const freq=player==='X'?520:440, freq2=player==='X'?780:660;
+  const osc=ctx.createOscillator(), gain=ctx.createGain();
+  osc.type='sine'; osc.frequency.setValueAtTime(freq,now);
+  osc.frequency.exponentialRampToValueAtTime(freq2,now+.06);
+  osc.frequency.exponentialRampToValueAtTime(freq*.8,now+.15);
+  gain.gain.setValueAtTime(.15,now); gain.gain.exponentialRampToValueAtTime(.001,now+.18);
+  osc.connect(gain).connect(ctx.destination); osc.start(now); osc.stop(now+.2);
 }
 
 function playVictoryMusic(player) {
-  ensureAudio();
-  const ctx = audioCtx;
-  const now = ctx.currentTime;
-  const melody = player === 'X'
-    ? [{f:523,t:0,d:.15},{f:523,t:.15,d:.15},{f:523,t:.3,d:.15},{f:659,t:.5,d:.3},{f:523,t:.85,d:.15},{f:659,t:1.05,d:.15},{f:784,t:1.25,d:.6},{f:784,t:1.9,d:.12},{f:880,t:2.05,d:.12},{f:1047,t:2.2,d:.8}]
-    : [{f:440,t:0,d:.15},{f:440,t:.15,d:.15},{f:440,t:.3,d:.15},{f:554,t:.5,d:.3},{f:440,t:.85,d:.15},{f:554,t:1.05,d:.15},{f:659,t:1.25,d:.6},{f:659,t:1.9,d:.12},{f:740,t:2.05,d:.12},{f:880,t:2.2,d:.8}];
+  ensureAudio(); const ctx=audioCtx, now=ctx.currentTime;
+  const melody=player==='X'?[{f:523,t:0,d:.15},{f:523,t:.15,d:.15},{f:523,t:.3,d:.15},{f:659,t:.5,d:.3},{f:523,t:.85,d:.15},{f:659,t:1.05,d:.15},{f:784,t:1.25,d:.6},{f:784,t:1.9,d:.12},{f:880,t:2.05,d:.12},{f:1047,t:2.2,d:.8}]:[{f:440,t:0,d:.15},{f:440,t:.15,d:.15},{f:440,t:.3,d:.15},{f:554,t:.5,d:.3},{f:440,t:.85,d:.15},{f:554,t:1.05,d:.15},{f:659,t:1.25,d:.6},{f:659,t:1.9,d:.12},{f:740,t:2.05,d:.12},{f:880,t:2.2,d:.8}];
   melody.forEach(({f,t,d})=>{const o=ctx.createOscillator(),g=ctx.createGain();o.type='square';o.frequency.setValueAtTime(f,now+t);g.gain.setValueAtTime(0,now+t);g.gain.linearRampToValueAtTime(.08,now+t+.02);g.gain.setValueAtTime(.08,now+t+d*.7);g.gain.exponentialRampToValueAtTime(.001,now+t+d);o.connect(g).connect(ctx.destination);o.start(now+t);o.stop(now+t+d+.05);});
-  const harmony = player==='X'?[{f:392,t:.5,d:.3},{f:392,t:1.25,d:.6},{f:523,t:2.2,d:.8}]:[{f:330,t:.5,d:.3},{f:330,t:1.25,d:.6},{f:440,t:2.2,d:.8}];
+  const harmony=player==='X'?[{f:392,t:.5,d:.3},{f:392,t:1.25,d:.6},{f:523,t:2.2,d:.8}]:[{f:330,t:.5,d:.3},{f:330,t:1.25,d:.6},{f:440,t:2.2,d:.8}];
   harmony.forEach(({f,t,d})=>{const o=ctx.createOscillator(),g=ctx.createGain();o.type='sine';o.frequency.setValueAtTime(f,now+t);g.gain.setValueAtTime(0,now+t);g.gain.linearRampToValueAtTime(.06,now+t+.02);g.gain.exponentialRampToValueAtTime(.001,now+t+d);o.connect(g).connect(ctx.destination);o.start(now+t);o.stop(now+t+d+.05);});
   [0,.5,1.25,2.2].forEach(t=>{const o=ctx.createOscillator(),g=ctx.createGain();o.type='sine';o.frequency.setValueAtTime(100,now+t);o.frequency.exponentialRampToValueAtTime(40,now+t+.2);g.gain.setValueAtTime(.2,now+t);g.gain.exponentialRampToValueAtTime(.001,now+t+.3);o.connect(g).connect(ctx.destination);o.start(now+t);o.stop(now+t+.35);});
   const bs=ctx.sampleRate*.8,buf=ctx.createBuffer(1,bs,ctx.sampleRate),dd=buf.getChannelData(0);for(let i=0;i<bs;i++)dd[i]=Math.random()*2-1;
@@ -387,86 +395,36 @@ function playVictoryMusic(player) {
 }
 
 function playDrawSound() {
-  ensureAudio();
-  const ctx = audioCtx; const now = ctx.currentTime;
-  const osc = ctx.createOscillator(); const gain = ctx.createGain();
-  osc.type = 'triangle'; osc.frequency.setValueAtTime(300, now);
-  osc.frequency.linearRampToValueAtTime(200, now + 0.4);
-  gain.gain.setValueAtTime(0.12, now); gain.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
-  osc.connect(gain).connect(ctx.destination); osc.start(now); osc.stop(now + 0.55);
+  ensureAudio(); const ctx=audioCtx, now=ctx.currentTime;
+  const osc=ctx.createOscillator(), gain=ctx.createGain();
+  osc.type='triangle'; osc.frequency.setValueAtTime(300,now);
+  osc.frequency.linearRampToValueAtTime(200,now+.4);
+  gain.gain.setValueAtTime(.12,now); gain.gain.exponentialRampToValueAtTime(.001,now+.5);
+  osc.connect(gain).connect(ctx.destination); osc.start(now); osc.stop(now+.55);
 }
 
 // ── Celebration ────────────────────────────────────────
 function celebrate(player) {
-  const burstColor = player === 'X' ? 'rgba(99,102,241,0.6)' : 'rgba(236,72,153,0.6)';
-  const bannerColor = player === 'X' ? '#6366f1' : '#ec4899';
-
-  const flash = document.createElement('div');
-  flash.className = 'celebration-flash';
-  document.body.appendChild(flash);
-  setTimeout(() => flash.remove(), 900);
-
-  const burst = document.createElement('div');
-  burst.className = 'starburst';
-  burst.style.setProperty('--burst-color', burstColor);
-  document.body.appendChild(burst);
-  setTimeout(() => burst.remove(), 1300);
-
-  setTimeout(() => {
-    const b2 = document.createElement('div');
-    b2.className = 'starburst';
-    b2.style.setProperty('--burst-color', burstColor);
-    document.body.appendChild(b2);
-    setTimeout(() => b2.remove(), 1300);
-  }, 400);
-
-  const banner = document.createElement('div');
-  banner.className = 'winner-banner';
-  banner.style.setProperty('--banner-color', bannerColor);
-  banner.style.color = bannerColor;
-  banner.textContent = `${player} Wins!`;
-  document.body.appendChild(banner);
-  setTimeout(() => {
-    banner.style.animation = 'bannerFade 1s ease-out forwards';
-    setTimeout(() => banner.remove(), 1000);
-  }, 2200);
-
-  for (let wave = 0; wave < 3; wave++) {
-    setTimeout(() => {
-      const container = document.createElement('div');
-      container.className = 'confetti-container';
-      document.body.appendChild(container);
-      const colors = player === 'X'
-        ? ['#6366f1','#818cf8','#a5b4fc','#c7d2fe','#a855f7','#fbbf24']
-        : ['#ec4899','#f472b6','#f9a8d4','#fbcfe8','#a855f7','#fbbf24'];
-      const count = wave === 0 ? 60 : 40;
-      for (let i = 0; i < count; i++) {
-        const c = document.createElement('div');
-        c.className = 'confetti';
-        const col = colors[Math.floor(Math.random()*colors.length)];
-        const size = 4 + Math.random()*10;
-        const shapes = ['50%','2px','0'];
-        c.style.cssText = `left:${Math.random()*100}%;top:-10px;width:${size}px;height:${size*(0.5+Math.random())}px;background:${col};border-radius:${shapes[Math.floor(Math.random()*3)]};animation-delay:${Math.random()*0.4}s;animation-duration:${1.5+Math.random()*2}s;`;
-        container.appendChild(c);
-      }
-      setTimeout(() => container.remove(), 4000);
-    }, wave * 600);
-  }
-
+  const burstColor=player==='X'?'rgba(99,102,241,0.6)':'rgba(236,72,153,0.6)';
+  const bannerColor=player==='X'?'#6366f1':'#ec4899';
+  const flash=document.createElement('div');flash.className='celebration-flash';document.body.appendChild(flash);setTimeout(()=>flash.remove(),900);
+  const burst=document.createElement('div');burst.className='starburst';burst.style.setProperty('--burst-color',burstColor);document.body.appendChild(burst);setTimeout(()=>burst.remove(),1300);
+  setTimeout(()=>{const b2=document.createElement('div');b2.className='starburst';b2.style.setProperty('--burst-color',burstColor);document.body.appendChild(b2);setTimeout(()=>b2.remove(),1300);},400);
+  const banner=document.createElement('div');banner.className='winner-banner';banner.style.setProperty('--banner-color',bannerColor);banner.style.color=bannerColor;banner.textContent=`${player} Wins!`;document.body.appendChild(banner);setTimeout(()=>{banner.style.animation='bannerFade 1s ease-out forwards';setTimeout(()=>banner.remove(),1000);},2200);
+  for(let wave=0;wave<3;wave++){setTimeout(()=>{const container=document.createElement('div');container.className='confetti-container';document.body.appendChild(container);const colors=player==='X'?['#6366f1','#818cf8','#a5b4fc','#c7d2fe','#a855f7','#fbbf24']:['#ec4899','#f472b6','#f9a8d4','#fbcfe8','#a855f7','#fbbf24'];const count=wave===0?60:40;for(let i=0;i<count;i++){const c=document.createElement('div');c.className='confetti';const col=colors[Math.floor(Math.random()*colors.length)];const size=4+Math.random()*10;const shapes=['50%','2px','0'];c.style.cssText=`left:${Math.random()*100}%;top:-10px;width:${size}px;height:${size*(0.5+Math.random())}px;background:${col};border-radius:${shapes[Math.floor(Math.random()*3)]};animation-delay:${Math.random()*0.4}s;animation-duration:${1.5+Math.random()*2}s;`;container.appendChild(c);}setTimeout(()=>container.remove(),4000);},wave*600);}
   playVictoryMusic(player);
 }
 
 // ── Win Probability ────────────────────────────────────
 function boardStateKey(player) {
   let minR=SIZE,maxR=-1,minC=SIZE,maxC=-1;
-  for(let r=0;r<SIZE;r++)for(let c=0;c<SIZE;c++)if(grid[r][c]){if(r<minR)minR=r;if(r>maxR)maxR=r;if(c<minC)minC=c;if(c>maxC)maxC=c;}
+  for(let r=0;r<SIZE;r++)for(let c=0;c<SIZE;c++)if(grid[r][c]&&grid[r][c]!=='W'){if(r<minR)minR=r;if(r>maxR)maxR=r;if(c<minC)minC=c;if(c>maxC)maxC=c;}
   if(maxR===-1)return player+':empty';
   const r0=Math.max(0,minR-2),r1=Math.min(SIZE-1,maxR+2),c0=Math.max(0,minC-2),c1=Math.min(SIZE-1,maxC+2);
   let key=player+':'+r0+','+c0+',';
   for(let r=r0;r<=r1;r++)for(let c=c0;c<=c1;c++)key+=grid[r][c]||'.';
   return key;
 }
-
 function gridHasWon(p) {
   for(let r=0;r<SIZE;r++)for(let c=0;c<SIZE;c++){
     if(grid[r][c]!==p)continue;
@@ -477,10 +435,9 @@ function gridHasWon(p) {
   }
   return false;
 }
-
 function getValidMovesFromGrid() {
   let minR=SIZE,maxR=-1,minC=SIZE,maxC=-1,has=false;
-  for(let r=0;r<SIZE;r++)for(let c=0;c<SIZE;c++)if(grid[r][c]){has=true;if(r<minR)minR=r;if(r>maxR)maxR=r;if(c<minC)minC=c;if(c>maxC)maxC=c;}
+  for(let r=0;r<SIZE;r++)for(let c=0;c<SIZE;c++)if(grid[r][c]&&grid[r][c]!=='W'){has=true;if(r<minR)minR=r;if(r>maxR)maxR=r;if(c<minC)minC=c;if(c>maxC)maxC=c;}
   if(!has)return[];
   const result=[];
   const s0=Math.max(0,minR-2),s1=Math.min(SIZE-1,maxR+2),t0=Math.max(0,minC-2),t1=Math.min(SIZE-1,maxC+2);
@@ -490,29 +447,23 @@ function getValidMovesFromGrid() {
   }
   return result;
 }
-
-function enumerateOutcomes(player, memo) {
-  const key=boardStateKey(player);
-  if(memo.has(key))return memo.get(key);
+function enumerateOutcomes(player,memo) {
+  const key=boardStateKey(player);if(memo.has(key))return memo.get(key);
   if(gridHasWon('X')){const r={x:1,o:0,d:0};memo.set(key,r);return r;}
   if(gridHasWon('O')){const r={x:0,o:1,d:0};memo.set(key,r);return r;}
   const vm=getValidMovesFromGrid();
   if(vm.length===0){const r={x:0,o:0,d:1};memo.set(key,r);return r;}
-  const totals={x:0,o:0,d:0};
-  const next=player==='X'?'O':'X';
+  const totals={x:0,o:0,d:0};const next=player==='X'?'O':'X';
   for(const[r,c]of vm){grid[r][c]=player;const s=enumerateOutcomes(next,memo);totals.x+=s.x;totals.o+=s.o;totals.d+=s.d;grid[r][c]=null;}
   memo.set(key,totals);return totals;
 }
-
 function computeProbabilities() {
   if(moves.length===0)return{x:50,o:50,draw:0,depth:0};
-  const memo=new Map();
-  const result=enumerateOutcomes(currentPlayer,memo);
+  const memo=new Map();const result=enumerateOutcomes(currentPlayer,memo);
   const total=result.x+result.o+result.d;
   if(total===0)return{x:50,o:50,draw:0,depth:0};
   return{x:Math.round(result.x/total*100),o:Math.round(result.o/total*100),draw:Math.round(result.d/total*100),depth:getValidMovesFromGrid().length};
 }
-
 function updateProbBar() {
   if(gameOver)return;
   const probs=moves.length===0?{x:50,o:50,draw:0,depth:0}:computeProbabilities();
@@ -525,86 +476,51 @@ function updateProbBar() {
   const d=document.getElementById('probDepth');
   d.textContent=probs.depth>0?`analyzing ${probs.depth} move${probs.depth!==1?'s':''} ahead`:'';
 }
-
 function setProbResult(xP,oP,dP) {
-  document.getElementById('xProb').textContent=`X ${xP}%`;
-  document.getElementById('oProb').textContent=`O ${oP}%`;
-  document.getElementById('drawProb').textContent=`Draw ${dP}%`;
-  document.getElementById('xBar').style.width=xP+'%';
-  document.getElementById('oBar').style.width=oP+'%';
-  document.getElementById('drawBar').style.width=dP+'%';
+  document.getElementById('xProb').textContent=`X ${xP}%`;document.getElementById('oProb').textContent=`O ${oP}%`;
+  document.getElementById('drawProb').textContent=`Draw ${dP}%`;document.getElementById('xBar').style.width=xP+'%';
+  document.getElementById('oBar').style.width=oP+'%';document.getElementById('drawBar').style.width=dP+'%';
   document.getElementById('probDepth').textContent='';
 }
 
-// ── Multiplayer (PeerJS) ──────────────────────────────
+// ── Multiplayer ───────────────────────────────────────
 function generateCode() {
-  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-  let code = '';
-  for (let i = 0; i < 4; i++) code += chars[Math.floor(Math.random() * chars.length)];
-  return code;
+  const chars='ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; let code='';
+  for(let i=0;i<4;i++)code+=chars[Math.floor(Math.random()*chars.length)]; return code;
 }
-
-function sendMsg(data) {
-  if (conn && conn.open) conn.send(JSON.stringify(data));
-}
+function sendMsg(data) { if(conn&&conn.open)conn.send(JSON.stringify(data)); }
 
 function handleMessage(raw) {
-  let msg;
-  try { msg = JSON.parse(raw); } catch { return; }
+  let msg; try{msg=JSON.parse(raw);}catch{return;}
 
   if (msg.type === 'move') {
-    // Opponent made a move
-    const { row, col } = msg;
-    if (!isValid(row, col)) return;
-    playPlaceSound(currentPlayer);
-    grid[row][col] = currentPlayer;
-    moves.push({ row, col, player: currentPlayer });
-
-    const winLine = checkWin(currentPlayer);
-    if (winLine) {
-      gameOver = true;
-      scores[currentPlayer]++;
-      document.getElementById('xWins').textContent = scores.X;
-      document.getElementById('oWins').textContent = scores.O;
-      render(new Set(winLine));
-      drawWinLine(winLine, currentPlayer);
-      statusEl.innerHTML = `<span class="winner">${currentPlayer} wins!</span>`;
-      setProbResult(currentPlayer === 'X' ? 100 : 0, currentPlayer === 'O' ? 100 : 0, 0);
-      setTimeout(() => celebrate(currentPlayer), 150);
-      return;
-    }
-
-    currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
-    const validCells = getValidCells();
-    if (validCells.size === 0 && !gameOver) {
-      gameOver = true;
-      render();
-      statusEl.innerHTML = `It's a draw!`;
-      setProbResult(0, 0, 100);
-      playDrawSound();
-      return;
-    }
-
-    render();
-    updateStatus();
-    updateProbBar();
+    applyMove(msg.row, msg.col, false);
   } else if (msg.type === 'reset') {
     initGame(msg.starter);
   } else if (msg.type === 'undo') {
-    // Opponent requests undo of their last move
+    const opponentRole = myRole === 'X' ? 'O' : 'X';
     if (moves.length === 0 || gameOver) return;
     const last = moves[moves.length - 1];
-    // Only allow undo of the sender's own move (opponent's role)
-    const opponentRole = myRole === 'X' ? 'O' : 'X';
     if (last.player !== opponentRole) return;
-    moves.pop();
-    grid[last.row][last.col] = null;
-    currentPlayer = last.player;
-    winLineEl.style.display = 'none';
-    winLineEl.innerHTML = '';
-    render();
-    updateStatus();
-    updateProbBar();
+    moves.pop(); grid[last.row][last.col] = null; currentPlayer = last.player;
+    winLineEl.style.display='none'; winLineEl.innerHTML='';
+    render(); updateStatus(); updateProbBar();
+  } else if (msg.type === 'swap_decision') {
+    handleSwapDecision(msg.swapped, false);
+  } else if (msg.type === 'power_use') {
+    handlePowerUse(msg.action, msg.row, msg.col, false);
+  } else if (msg.type === 'rules') {
+    rules = msg.rules;
+  } else if (msg.type === 'bid') {
+    remoteBid = { row: msg.row, col: msg.col };
+    if (bidSelection) {
+      // Both bids are in, resolve
+      const xBid = myRole === 'X' ? bidSelection : remoteBid;
+      const oBid = myRole === 'O' ? bidSelection : remoteBid;
+      resolveBid(xBid, oBid);
+    } else {
+      actionPromptEl.innerHTML = '<div class="action-prompt"><span class="prompt-text">Opponent has bid. Click a cell to place yours.</span></div>';
+    }
   }
 }
 
@@ -616,164 +532,151 @@ function setupConnection(connection) {
     document.getElementById('connectionText').textContent = 'Connected';
   });
   conn.on('data', handleMessage);
-  conn.on('close', () => {
-    document.getElementById('connectionDot').classList.add('disconnected');
-    document.getElementById('connectionText').textContent = 'Opponent disconnected';
-  });
-  conn.on('error', () => {
-    document.getElementById('connectionDot').classList.add('disconnected');
-    document.getElementById('connectionText').textContent = 'Connection error';
-  });
+  conn.on('close', () => { document.getElementById('connectionDot').classList.add('disconnected'); document.getElementById('connectionText').textContent = 'Opponent disconnected'; });
+  conn.on('error', () => { document.getElementById('connectionDot').classList.add('disconnected'); document.getElementById('connectionText').textContent = 'Connection error'; });
 }
 
 function createGame() {
   const code = generateCode();
   const peerId = 'ttt13-' + code;
-
   document.getElementById('lobbyMenu').classList.add('hidden');
   document.getElementById('createView').classList.remove('hidden');
   document.getElementById('gameCode').textContent = code;
-
   peer = new Peer(peerId);
-
-  peer.on('open', () => {
-    document.getElementById('createStatus').textContent = 'Waiting for opponent to join...';
-  });
-
+  peer.on('open', () => { document.getElementById('createStatus').textContent = 'Waiting for opponent to join...'; });
   peer.on('connection', (connection) => {
-    myRole = 'X';
-    gameMode = 'online';
+    myRole = 'X'; gameMode = 'online';
     setupConnection(connection);
+    // Send rules to joiner once connected
+    connection.on('open', () => { sendMsg({ type: 'rules', rules }); });
     startGame();
   });
-
   peer.on('error', (err) => {
-    const statusEl = document.getElementById('createStatus');
-    if (err.type === 'unavailable-id') {
-      statusEl.textContent = 'Code taken. Try again.';
-      statusEl.classList.add('error');
-    } else {
-      statusEl.textContent = 'Connection error: ' + err.type;
-      statusEl.classList.add('error');
-    }
+    const s = document.getElementById('createStatus');
+    s.textContent = err.type === 'unavailable-id' ? 'Code taken. Try again.' : 'Connection error: ' + err.type;
+    s.classList.add('error');
   });
-
-  // Copy on click
   document.getElementById('gameCode').onclick = () => {
-    navigator.clipboard.writeText(code).then(() => {
-      document.querySelector('.copy-hint').textContent = 'Copied!';
-      setTimeout(() => { document.querySelector('.copy-hint').textContent = 'Click the code to copy'; }, 1500);
-    });
+    navigator.clipboard.writeText(code).then(() => { document.querySelector('.copy-hint').textContent = 'Copied!'; setTimeout(() => { document.querySelector('.copy-hint').textContent = 'Click the code to copy'; }, 1500); });
   };
 }
 
 function joinGame() {
   const code = document.getElementById('joinInput').value.trim().toUpperCase();
   if (!code) return;
-
   const joinStatus = document.getElementById('joinStatus');
-  joinStatus.textContent = 'Connecting...';
-  joinStatus.classList.remove('error');
-
+  joinStatus.textContent = 'Connecting...'; joinStatus.classList.remove('error');
   peer = new Peer();
-
   peer.on('open', () => {
-    const peerId = 'ttt13-' + code;
-    const connection = peer.connect(peerId, { reliable: true });
-
-    connection.on('open', () => {
-      myRole = 'O';
-      gameMode = 'online';
-      setupConnection(connection);
-      startGame();
-    });
-
-    connection.on('error', () => {
-      joinStatus.textContent = 'Could not connect. Check the code.';
-      joinStatus.classList.add('error');
-    });
-
-    // Timeout for connection
-    setTimeout(() => {
-      if (!conn || !conn.open) {
-        joinStatus.textContent = 'Could not find game. Check the code.';
-        joinStatus.classList.add('error');
-      }
-    }, 8000);
+    const connection = peer.connect('ttt13-' + code, { reliable: true });
+    connection.on('open', () => { myRole = 'O'; gameMode = 'online'; setupConnection(connection); startGame(); });
+    connection.on('error', () => { joinStatus.textContent = 'Could not connect.'; joinStatus.classList.add('error'); });
+    setTimeout(() => { if (!conn || !conn.open) { joinStatus.textContent = 'Could not find game.'; joinStatus.classList.add('error'); } }, 8000);
   });
-
-  peer.on('error', (err) => {
-    joinStatus.textContent = 'Error: ' + err.type;
-    joinStatus.classList.add('error');
-  });
-}
-
-function startLocalGame() {
-  gameMode = 'local';
-  myRole = null;
-  startGame();
+  peer.on('error', (err) => { joinStatus.textContent = 'Error: ' + err.type; joinStatus.classList.add('error'); });
 }
 
 function startGame() {
   document.getElementById('lobby').classList.add('hidden');
   document.getElementById('gameContainer').classList.remove('hidden');
-
-  if (gameMode === 'online') {
-    document.getElementById('leaveBtn').classList.remove('hidden');
-    document.getElementById('connectionBar').classList.remove('hidden');
-  } else {
-    document.getElementById('leaveBtn').classList.add('hidden');
-    document.getElementById('connectionBar').classList.add('hidden');
-  }
-
+  document.getElementById('leaveBtn').classList.toggle('hidden', gameMode === 'local');
+  document.getElementById('connectionBar').classList.toggle('hidden', gameMode === 'local');
+  renderActiveRules();
   initGame();
 }
 
 function leaveGame() {
-  if (conn) conn.close();
-  if (peer) peer.destroy();
-  conn = null;
-  peer = null;
-  gameMode = 'local';
-  myRole = null;
-
+  if(conn)conn.close(); if(peer)peer.destroy(); conn=null; peer=null;
+  gameMode='local'; myRole=null;
   document.getElementById('gameContainer').classList.add('hidden');
   document.getElementById('lobby').classList.remove('hidden');
   document.getElementById('lobbyMenu').classList.remove('hidden');
   document.getElementById('createView').classList.add('hidden');
   document.getElementById('joinView').classList.add('hidden');
+  document.getElementById('rulesView').classList.add('hidden');
   document.getElementById('connectionBar').classList.add('hidden');
+}
+
+function renderActiveRules() {
+  const el = document.getElementById('activeRules');
+  const badges = [];
+  if (rules.swap) badges.push('<span class="rule-badge" id="badgeSwap">Swap Rule</span>');
+  if (rules.power) badges.push('<span class="rule-badge" id="badgePower">Power Move</span>');
+  if (rules.komi) badges.push('<span class="rule-badge" id="badgeKomi">Komi</span>');
+  if (rules.shrink) badges.push('<span class="rule-badge" id="badgeShrink">Shrinking Grid</span>');
+  if (rules.bid) badges.push('<span class="rule-badge" id="badgeBid">Bid</span>');
+  el.innerHTML = badges.join('');
 }
 
 // ── Game Logic ─────────────────────────────────────────
 function initGame(startingPlayer) {
   grid = Array.from({ length: SIZE }, () => Array(SIZE).fill(null));
   currentPlayer = startingPlayer || (Math.random() < 0.5 ? 'X' : 'O');
+  firstPlayer = currentPlayer;
+  secondPlayer = currentPlayer === 'X' ? 'O' : 'X';
   moves = [];
   gameOver = false;
+  swapPhase = false;
+  powerAvailable = rules.power;
+  powerMode = null;
+  doubleMovePending = false;
+  bidPhase = false;
+  bidSelection = null;
+  remoteBid = null;
+  actionPromptEl.innerHTML = '';
   winLineEl.style.display = 'none';
   winLineEl.innerHTML = '';
-  render();
-  updateStatus();
+  renderActiveRules();
+
+  if (rules.bid) {
+    bidPhase = true;
+    render();
+    showBidPrompt();
+  } else {
+    render();
+    updateStatus();
+  }
   updateProbBar();
 }
 
 function isMyTurn() {
   if (gameMode === 'local') return true;
+  if (swapPhase) return currentPlayer === myRole; // second player decides
   return currentPlayer === myRole;
 }
 
 function getBounds() {
   let minR=SIZE,maxR=-1,minC=SIZE,maxC=-1;
-  for(const m of moves){minR=Math.min(minR,m.row);maxR=Math.max(maxR,m.row);minC=Math.min(minC,m.col);maxC=Math.max(maxC,m.col);}
+  for(const m of moves){if(m.player==='W')continue;minR=Math.min(minR,m.row);maxR=Math.max(maxR,m.row);minC=Math.min(minC,m.col);maxC=Math.max(maxC,m.col);}
   if(maxR===-1)return null;
   return{minR,maxR,minC,maxC};
 }
 
 function isValid(row, col) {
   if(grid[row][col]!==null||gameOver)return false;
-  if(moves.length===0)return true;
+  const realMoves = moves.filter(m=>m.player!=='W');
+  if(realMoves.length===0)return true;
   const b=getBounds();
+
+  // Shrinking grid: first player bound by own pieces only (locks fast),
+  // second player uses the global bounds but gets a wider 4-cell span
+  if (rules.shrink) {
+    if (currentPlayer === firstPlayer) {
+      // First player: constrained by their OWN pieces to 3x3
+      const fpMoves = realMoves.filter(m => m.player === firstPlayer);
+      if (fpMoves.length === 0) return true;
+      let fMinR=SIZE,fMaxR=-1,fMinC=SIZE,fMaxC=-1;
+      for(const m of fpMoves){fMinR=Math.min(fMinR,m.row);fMaxR=Math.max(fMaxR,m.row);fMinC=Math.min(fMinC,m.col);fMaxC=Math.max(fMaxC,m.col);}
+      const okOwn = (Math.max(fMaxR,row)-Math.min(fMinR,row)<WIN_SIZE)&&(Math.max(fMaxC,col)-Math.min(fMinC,col)<WIN_SIZE);
+      // Also must stay within global 3x3
+      const okGlobal = (Math.max(b.maxR,row)-Math.min(b.minR,row)<WIN_SIZE)&&(Math.max(b.maxC,col)-Math.min(b.minC,col)<WIN_SIZE);
+      return okOwn && okGlobal;
+    } else {
+      // Second player: normal global 3x3 constraint
+      return(Math.max(b.maxR,row)-Math.min(b.minR,row)<WIN_SIZE)&&(Math.max(b.maxC,col)-Math.min(b.minC,col)<WIN_SIZE);
+    }
+  }
+
   return(Math.max(b.maxR,row)-Math.min(b.minR,row)<WIN_SIZE)&&(Math.max(b.maxC,col)-Math.min(b.minC,col)<WIN_SIZE);
 }
 
@@ -808,90 +711,381 @@ function drawWinLine(winCells, player) {
   const dx=end.x-start.x,dy=end.y-start.y,len=Math.sqrt(dx*dx+dy*dy);
   const ext=2.5,ex=(dx/len)*ext,ey=(dy/len)*ext;
   const color=player==='X'?'rgba(99,102,241,0.9)':'rgba(236,72,153,0.9)';
-  winLineEl.style.display='block';
-  winLineEl.style.setProperty('--line-color',color);
+  winLineEl.style.display='block';winLineEl.style.setProperty('--line-color',color);
   winLineEl.innerHTML=`<line x1="${start.x-ex}" y1="${start.y-ey}" x2="${end.x+ex}" y2="${end.y+ey}" stroke="${color}" stroke-dasharray="1000" stroke-dashoffset="1000" style="animation:lineGrow .4s .15s ease-out forwards;"/>`;
 }
 
-function placeMove(row, col) {
+function finishGame(winner) {
+  gameOver = true;
+  if (winner === 'draw') {
+    // Komi: draw counts as win for second player
+    if (rules.komi) {
+      const komiWinner = secondPlayer;
+      scores[komiWinner]++;
+      document.getElementById('xWins').textContent = scores.X;
+      document.getElementById('oWins').textContent = scores.O;
+      render();
+      statusEl.innerHTML = `<span class="winner">${komiWinner} wins by komi!</span>`;
+      setProbResult(komiWinner==='X'?100:0, komiWinner==='O'?100:0, 0);
+      setTimeout(() => celebrate(komiWinner), 150);
+    } else {
+      render();
+      statusEl.innerHTML = `It's a draw!`;
+      setProbResult(0, 0, 100);
+      playDrawSound();
+    }
+  } else {
+    scores[winner]++;
+    document.getElementById('xWins').textContent = scores.X;
+    document.getElementById('oWins').textContent = scores.O;
+    const winLine = checkWin(winner);
+    render(winLine ? new Set(winLine) : null);
+    if (winLine) drawWinLine(winLine, winner);
+    statusEl.innerHTML = `<span class="winner">${winner} wins!</span>`;
+    setProbResult(winner==='X'?100:0, winner==='O'?100:0, 0);
+    setTimeout(() => celebrate(winner), 150);
+  }
+  actionPromptEl.innerHTML = '';
+}
+
+function applyMove(row, col, isLocal) {
+  if (swapPhase || gameOver) return;
   if (!isValid(row, col)) return;
-  if (!isMyTurn()) return;
+  if (isLocal && !isMyTurn()) return;
+
+  // Power mode: erase
+  if (powerMode === 'erase') {
+    // handled in cellClick, not here
+    return;
+  }
 
   playPlaceSound(currentPlayer);
   grid[row][col] = currentPlayer;
   moves.push({ row, col, player: currentPlayer });
 
-  // Send to peer
-  if (gameMode === 'online') sendMsg({ type: 'move', row, col });
+  if (isLocal && gameMode === 'online') sendMsg({ type: 'move', row, col });
 
   const winLine = checkWin(currentPlayer);
-  if (winLine) {
-    gameOver = true;
-    scores[currentPlayer]++;
-    document.getElementById('xWins').textContent = scores.X;
-    document.getElementById('oWins').textContent = scores.O;
-    render(new Set(winLine));
-    drawWinLine(winLine, currentPlayer);
-    statusEl.innerHTML = `<span class="winner">${currentPlayer} wins!</span>`;
-    setProbResult(currentPlayer === 'X' ? 100 : 0, currentPlayer === 'O' ? 100 : 0, 0);
-    setTimeout(() => celebrate(currentPlayer), 150);
+  if (winLine) { finishGame(currentPlayer); return; }
+
+  // After first move, trigger swap phase
+  if (rules.swap && moves.filter(m => m.player !== 'W').length === 1 && !doubleMovePending) {
+    swapPhase = true;
+    currentPlayer = secondPlayer;
+    render();
+    updateStatus();
+    showSwapPrompt();
     return;
   }
 
-  currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+  if (doubleMovePending) {
+    doubleMovePending = false;
+    powerMode = null;
+    // Don't switch player — already placed second mark
+  }
+
+  if (!doubleMovePending) {
+    currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+  }
+
   const validCells = getValidCells();
-  if (validCells.size === 0 && !gameOver) {
-    gameOver = true;
+  if (validCells.size === 0 && !gameOver) { finishGame('draw'); return; }
+
+  render();
+  updateStatus();
+  updateProbBar();
+  showPowerPromptIfNeeded();
+}
+
+function cellClick(row, col) {
+  if (gameOver) return;
+
+  // Bid phase: capture secret cell selections
+  if (bidPhase) { handleBidClick(row, col); return; }
+
+  // Erase mode: click opponent's mark to remove it
+  if (powerMode === 'erase') {
+    const opponent = currentPlayer === 'X' ? 'O' : 'X';
+    if (grid[row][col] !== opponent) return;
+    if (gameMode === 'online' && !isMyTurn()) return;
+
+    grid[row][col] = null;
+    const idx = moves.findIndex(m => m.row === row && m.col === col && m.player === opponent);
+    if (idx !== -1) moves.splice(idx, 1);
+
+    powerMode = null;
+    powerAvailable = false;
+    markPowerUsed();
+    actionPromptEl.innerHTML = '';
+
+    if (gameMode === 'online') sendMsg({ type: 'power_use', action: 'erase', row, col });
+
+    // Don't switch turn — they still get their normal move
     render();
-    statusEl.innerHTML = `It's a draw!`;
-    setProbResult(0, 0, 100);
-    playDrawSound();
+    updateStatus();
+    updateProbBar();
     return;
+  }
+
+  // Wall mode: place wall on empty cell
+  if (powerMode === 'wall') {
+    if (!isValid(row, col)) return;
+    if (gameMode === 'online' && !isMyTurn()) return;
+
+    grid[row][col] = 'W';
+    moves.push({ row, col, player: 'W' });
+
+    powerMode = null;
+    powerAvailable = false;
+    markPowerUsed();
+    actionPromptEl.innerHTML = '';
+
+    if (gameMode === 'online') sendMsg({ type: 'power_use', action: 'wall', row, col });
+
+    // Don't switch turn
+    render();
+    updateStatus();
+    updateProbBar();
+    return;
+  }
+
+  // Double mode: this is the first of two marks
+  if (powerMode === 'double' && !doubleMovePending) {
+    if (!isValid(row, col)) return;
+    if (gameMode === 'online' && !isMyTurn()) return;
+
+    playPlaceSound(currentPlayer);
+    grid[row][col] = currentPlayer;
+    moves.push({ row, col, player: currentPlayer });
+
+    if (gameMode === 'online') sendMsg({ type: 'power_use', action: 'double', row, col });
+
+    const winLine = checkWin(currentPlayer);
+    if (winLine) { powerAvailable = false; markPowerUsed(); finishGame(currentPlayer); return; }
+
+    doubleMovePending = true;
+    powerAvailable = false;
+    markPowerUsed();
+    actionPromptEl.innerHTML = '<div class="action-prompt"><span class="prompt-text">Place your second mark</span></div>';
+    render();
+    updateStatus();
+    return;
+  }
+
+  applyMove(row, col, true);
+}
+
+// ── Swap Rule ──────────────────────────────────────────
+function showSwapPrompt() {
+  if (gameMode === 'online' && myRole !== secondPlayer) {
+    actionPromptEl.innerHTML = '<div class="action-prompt"><span class="prompt-text">Opponent choosing: swap or play...</span></div>';
+    return;
+  }
+  actionPromptEl.innerHTML = `
+    <div class="action-prompt">
+      <span class="prompt-text">Steal this position?</span>
+      <button onclick="doSwap(true)">Swap</button>
+      <button onclick="doSwap(false)">Play Normally</button>
+    </div>`;
+}
+
+function doSwap(swapped) {
+  if (gameMode === 'online') sendMsg({ type: 'swap_decision', swapped });
+  handleSwapDecision(swapped, true);
+}
+
+function handleSwapDecision(swapped, isLocal) {
+  swapPhase = false;
+  actionPromptEl.innerHTML = '';
+
+  if (swapped) {
+    // Second player takes first player's mark
+    const m = moves[0];
+    grid[m.row][m.col] = secondPlayer;
+    m.player = secondPlayer;
+    // Swap roles
+    const temp = firstPlayer;
+    firstPlayer = secondPlayer;
+    secondPlayer = temp;
+    // In online mode, swap myRole
+    if (gameMode === 'online') {
+      myRole = myRole === 'X' ? 'O' : 'X';
+    }
+    currentPlayer = secondPlayer; // original first player now goes
+  } else {
+    currentPlayer = secondPlayer; // second player plays normally
+  }
+
+  // Reset power availability for the (possibly new) second player
+  if (rules.power) { powerAvailable = true; }
+  renderActiveRules();
+  render();
+  updateStatus();
+  updateProbBar();
+  showPowerPromptIfNeeded();
+}
+
+// ── Bid for First Move ────────────────────────────────
+function showBidPrompt() {
+  if (gameMode === 'online') {
+    actionPromptEl.innerHTML = '<div class="action-prompt"><span class="prompt-text">Click a cell to place your secret bid</span></div>';
+  } else {
+    const who = !bidSelection ? 'X' : 'O';
+    actionPromptEl.innerHTML = `<div class="action-prompt"><span class="prompt-text">${who}: Click a cell to secretly bid (look away, ${who === 'X' ? 'O' : 'X'}!)</span></div>`;
+  }
+  statusEl.innerHTML = '<span style="color:rgba(168,85,247,0.8)">Bid phase</span>';
+}
+
+function handleBidClick(row, col) {
+  if (!bidPhase) return;
+
+  if (gameMode === 'local') {
+    if (!bidSelection) {
+      bidSelection = { row, col };
+      actionPromptEl.innerHTML = '<div class="action-prompt"><span class="prompt-text">O: Now click a cell to secretly bid (look away, X!)</span></div>';
+    } else {
+      resolveBid(bidSelection, { row, col });
+    }
+  } else {
+    bidSelection = { row, col };
+    sendMsg({ type: 'bid', row, col });
+    actionPromptEl.innerHTML = '<div class="action-prompt"><span class="prompt-text waiting">Waiting for opponent\'s bid...</span></div>';
+    if (remoteBid) {
+      const xBid = myRole === 'X' ? bidSelection : remoteBid;
+      const oBid = myRole === 'O' ? bidSelection : remoteBid;
+      resolveBid(xBid, oBid);
+    }
+  }
+}
+
+function resolveBid(xBid, oBid) {
+  bidPhase = false;
+  actionPromptEl.innerHTML = '';
+
+  if (xBid.row === oBid.row && xBid.col === oBid.col) {
+    // Same cell: second player gets it
+    grid[oBid.row][oBid.col] = secondPlayer;
+    moves.push({ row: oBid.row, col: oBid.col, player: secondPlayer });
+    playPlaceSound(secondPlayer);
+    currentPlayer = firstPlayer;
+  } else {
+    // Different cells: both placed
+    grid[xBid.row][xBid.col] = firstPlayer;
+    moves.push({ row: xBid.row, col: xBid.col, player: firstPlayer });
+    grid[oBid.row][oBid.col] = secondPlayer;
+    moves.push({ row: oBid.row, col: oBid.col, player: secondPlayer });
+    playPlaceSound(firstPlayer);
+    setTimeout(() => playPlaceSound(secondPlayer), 100);
+    currentPlayer = firstPlayer;
   }
 
   render();
   updateStatus();
   updateProbBar();
+  showPowerPromptIfNeeded();
+}
+
+// ── Power Move ─────────────────────────────────────────
+function showPowerPromptIfNeeded() {
+  if (!rules.power || !powerAvailable || gameOver || swapPhase) return;
+  if (currentPlayer !== secondPlayer) return;
+  if (gameMode === 'online' && myRole !== secondPlayer) return;
+  if (powerMode || doubleMovePending) return;
+
+  // Only show after at least 1 move by second player (so there's context)
+  actionPromptEl.innerHTML = `
+    <div class="action-prompt">
+      <span class="prompt-text">Use power?</span>
+      <button onclick="activatePower('erase')">Erase</button>
+      <button onclick="activatePower('double')">Double</button>
+      <button onclick="activatePower('wall')">Wall</button>
+      <button onclick="skipPower()">Skip</button>
+    </div>`;
+}
+
+function activatePower(type) {
+  powerMode = type;
+  if (type === 'erase') {
+    actionPromptEl.innerHTML = '<div class="action-prompt"><span class="prompt-text">Click an opponent\'s mark to erase it</span></div>';
+  } else if (type === 'double') {
+    actionPromptEl.innerHTML = '<div class="action-prompt"><span class="prompt-text">Place your first of two marks</span></div>';
+  } else if (type === 'wall') {
+    actionPromptEl.innerHTML = '<div class="action-prompt"><span class="prompt-text">Click an empty cell to place a wall</span></div>';
+  }
+  render();
+}
+
+function skipPower() {
+  powerAvailable = false;
+  powerMode = null;
+  markPowerUsed();
+  actionPromptEl.innerHTML = '';
+}
+
+function handlePowerUse(action, row, col, isLocal) {
+  if (action === 'erase') {
+    const opponent = currentPlayer === 'X' ? 'O' : 'X';
+    // The sender is the second player, but from receiver's perspective currentPlayer is different
+    // We need to erase the mark at row,col
+    if (grid[row][col]) {
+      const erased = grid[row][col];
+      grid[row][col] = null;
+      const idx = moves.findIndex(m => m.row === row && m.col === col && m.player === erased);
+      if (idx !== -1) moves.splice(idx, 1);
+    }
+  } else if (action === 'wall') {
+    grid[row][col] = 'W';
+    moves.push({ row, col, player: 'W' });
+  } else if (action === 'double') {
+    playPlaceSound(currentPlayer);
+    grid[row][col] = currentPlayer;
+    moves.push({ row, col, player: currentPlayer });
+    const winLine = checkWin(currentPlayer);
+    if (winLine) { powerAvailable = false; markPowerUsed(); finishGame(currentPlayer); return; }
+    // After double first mark, the normal move handler will place the second
+    doubleMovePending = true;
+  }
+
+  powerAvailable = false;
+  powerMode = null;
+  markPowerUsed();
+  actionPromptEl.innerHTML = '';
+  render();
+  updateStatus();
+  updateProbBar();
+}
+
+function markPowerUsed() {
+  const badge = document.getElementById('badgePower');
+  if (badge) badge.classList.add('used');
 }
 
 function updateStatus() {
+  if (gameOver) return;
   const b = getBounds();
   const cls = currentPlayer === 'X' ? 'x' : 'o';
   let extra = '';
-  if (moves.length === 0) extra = ' &mdash; place anywhere';
+  if (moves.filter(m=>m.player!=='W').length === 0) extra = ' &mdash; place anywhere';
   else if (b) {
     const spanR = b.maxR - b.minR, spanC = b.maxC - b.minC;
     if (spanR === 2 && spanC === 2) extra = ' &mdash; grid locked';
     else extra = ' &mdash; grid forming';
   }
-
   let youTag = '';
   if (gameMode === 'online') {
-    if (isMyTurn()) youTag = ' <span class="you-tag">(your turn)</span>';
-    else youTag = ' <span class="you-tag">(waiting)</span>';
+    youTag = isMyTurn() ? ' <span class="you-tag">(your turn)</span>' : ' <span class="you-tag">(waiting)</span>';
   }
-
   statusEl.innerHTML = `<span class="${cls}">${currentPlayer}</span>'s turn${extra}${youTag}`;
 }
 
 function undo() {
-  if (moves.length === 0 || gameOver) return;
+  if (moves.length === 0 || gameOver || swapPhase) return;
   const last = moves[moves.length - 1];
-
-  // In online mode, only undo your own last move
   if (gameMode === 'online' && last.player !== myRole) return;
-
-  moves.pop();
-  grid[last.row][last.col] = null;
-  currentPlayer = last.player;
-  winLineEl.style.display = 'none';
-  winLineEl.innerHTML = '';
-
+  moves.pop(); grid[last.row][last.col] = null; currentPlayer = last.player;
+  winLineEl.style.display='none'; winLineEl.innerHTML='';
   if (gameMode === 'online') sendMsg({ type: 'undo' });
-
-  render();
-  updateStatus();
-  updateProbBar();
+  render(); updateStatus(); updateProbBar();
 }
 
 function resetGame() {
@@ -913,18 +1107,36 @@ function render(winCells = null) {
       cell.className = 'cell';
       const key = `${r}-${c}`;
 
-      if (grid[r][c]) {
+      if (grid[r][c] === 'W') {
+        cell.classList.add('taken', 'wall');
+        const mark = document.createElement('span');
+        mark.className = 'mark wall-mark';
+        mark.textContent = '\u2588';
+        cell.appendChild(mark);
+      } else if (grid[r][c]) {
         cell.classList.add('taken');
         const mark = document.createElement('span');
         mark.className = `mark ${grid[r][c].toLowerCase()}`;
         mark.textContent = grid[r][c];
         cell.appendChild(mark);
+
+        // Erase mode: opponent marks are clickable
+        if (powerMode === 'erase' && grid[r][c] !== currentPlayer && grid[r][c] !== 'W') {
+          cell.classList.remove('taken');
+          cell.classList.add('erase-target');
+        }
       }
 
-      if (validCells.has(key) && !gameOver) cell.classList.add('valid');
-      else if (!grid[r][c] && !gameOver) cell.classList.add('locked');
+      if (bidPhase) {
+        // During bid, all empty cells are valid targets
+        if (!grid[r][c]) cell.classList.add('valid');
+      } else if (!grid[r][c] && validCells.has(key) && !gameOver && !swapPhase) {
+        cell.classList.add('valid');
+      } else if (!grid[r][c] && !gameOver) {
+        cell.classList.add('locked');
+      }
 
-      if (!myTurn && !gameOver && !grid[r][c]) cell.classList.add('not-my-turn');
+      if (!bidPhase && !myTurn && !gameOver && !grid[r][c]) cell.classList.add('not-my-turn');
 
       if (winCells && winCells.has(key)) cell.classList.add('win-cell');
 
@@ -940,39 +1152,66 @@ function render(winCells = null) {
         }
       }
 
-      cell.addEventListener('click', () => placeMove(r, c));
+      cell.addEventListener('click', () => cellClick(r, c));
       boardEl.appendChild(cell);
     }
   }
 }
 
-// ── Lobby Event Handlers ──────────────────────────────
-document.getElementById('createBtn').addEventListener('click', createGame);
+// ── Lobby Wiring ──────────────────────────────────────
+function readRules() {
+  rules.swap = document.getElementById('ruleSwap').checked;
+  rules.power = document.getElementById('rulePower').checked;
+  rules.komi = document.getElementById('ruleKomi').checked;
+  rules.shrink = document.getElementById('ruleShrink').checked;
+  rules.bid = document.getElementById('ruleBid').checked;
+}
+
+document.getElementById('createBtn').addEventListener('click', () => {
+  pendingMode = 'create';
+  document.getElementById('lobbyMenu').classList.add('hidden');
+  document.getElementById('rulesView').classList.remove('hidden');
+});
+document.getElementById('localBtn').addEventListener('click', () => {
+  pendingMode = 'local';
+  document.getElementById('lobbyMenu').classList.add('hidden');
+  document.getElementById('rulesView').classList.remove('hidden');
+});
 document.getElementById('joinBtn').addEventListener('click', () => {
   document.getElementById('lobbyMenu').classList.add('hidden');
   document.getElementById('joinView').classList.remove('hidden');
   document.getElementById('joinInput').focus();
 });
-document.getElementById('localBtn').addEventListener('click', startLocalGame);
+
+document.getElementById('rulesConfirm').addEventListener('click', () => {
+  readRules();
+  document.getElementById('rulesView').classList.add('hidden');
+  if (pendingMode === 'create') {
+    createGame();
+  } else {
+    gameMode = 'local'; myRole = null;
+    startGame();
+  }
+});
+
+document.getElementById('rulesBack').addEventListener('click', () => {
+  document.getElementById('rulesView').classList.add('hidden');
+  document.getElementById('lobbyMenu').classList.remove('hidden');
+});
+
 document.getElementById('joinConnect').addEventListener('click', joinGame);
 document.getElementById('joinInput').addEventListener('keydown', e => { if (e.key === 'Enter') joinGame(); });
 
 document.getElementById('createBack').addEventListener('click', () => {
-  if (peer) peer.destroy();
-  peer = null;
+  if(peer)peer.destroy(); peer=null;
   document.getElementById('createView').classList.add('hidden');
   document.getElementById('lobbyMenu').classList.remove('hidden');
-  document.getElementById('createStatus').classList.remove('error');
-  document.getElementById('createStatus').textContent = 'Waiting for opponent to join...';
 });
-
 document.getElementById('joinBack').addEventListener('click', () => {
-  if (peer) peer.destroy();
-  peer = null;
+  if(peer)peer.destroy(); peer=null;
   document.getElementById('joinView').classList.add('hidden');
   document.getElementById('lobbyMenu').classList.remove('hidden');
-  document.getElementById('joinStatus').textContent = '';
-  document.getElementById('joinStatus').classList.remove('error');
+  document.getElementById('joinStatus').textContent='';
 });
 
 resetBtn.addEventListener('click', resetGame);
